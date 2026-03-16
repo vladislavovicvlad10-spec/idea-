@@ -1,0 +1,60 @@
+import type { Metadata } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
+import "./globals.css";
+import { AuthProvider } from "@/firebase/provider";
+import { Header } from "@/components/header";
+import { Toaster } from "@/components/ui/sonner";
+import { LanguageSelector } from "@/components/language-selector";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin", "cyrillic"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "IdeaSpark | AI Startup & App Generator",
+  description: "Generate innovative startup ideas, business strategies, and technology stacks with AI. Turn your vision into reality with IdeaSpark.",
+  keywords: ["AI startup generator", "app ideas", "business strategy", "tech stack", "IdeaSpark", "startup engine"],
+  authors: [{ name: "IdeaSpark Team" }],
+  openGraph: {
+    title: "IdeaSpark | AI Startup Generator",
+    description: "The most powerful AI tool to generate and detail your next big app idea.",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IdeaSpark | AI Startup Generator",
+    description: "Turn your ideas into detailed startup roadmaps with one click.",
+  },
+  viewport: "width=device-width, initial-scale=1",
+  robots: "index, follow",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="dark">
+      <body
+        className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased min-h-screen flex flex-col bg-background text-foreground`}
+      >
+        <AuthProvider>
+          <LanguageSelector />
+          <Header />
+            <main className="flex-1 flex flex-col w-full">
+              {children}
+            </main>
+          <Toaster position="bottom-right" />
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}

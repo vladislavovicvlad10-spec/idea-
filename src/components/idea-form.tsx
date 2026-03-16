@@ -1,0 +1,67 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Sparkles, Loader2 } from "lucide-react";
+import { getTranslation } from "@/lib/translations";
+
+interface IdeaFormProps {
+  onGenerate: (theme: string) => Promise<void>;
+  isLoading: boolean;
+}
+
+export function IdeaForm({ onGenerate, isLoading }: IdeaFormProps) {
+  const [theme, setTheme] = useState("");
+  const [lang, setLang] = useState("ru");
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem("app_lang");
+    if (savedLang) {
+      setTimeout(() => setLang(savedLang), 0);
+    }
+  }, []);
+
+  const t = getTranslation(lang);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!theme.trim()) return;
+    await onGenerate(theme);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as unknown as React.FormEvent);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto space-y-4">
+      <div className="relative group">
+        <Textarea
+          placeholder={t.placeholder}
+          value={theme}
+          onChange={(e) => setTheme(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="min-h-[140px] text-lg p-6 pr-16 shadow-2xl bg-card border-2 border-primary/20 focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary transition-all rounded-3xl resize-none"
+          disabled={isLoading}
+        />
+        <Button 
+          type="submit" 
+          size="icon"
+          title={t.generate}
+          className="absolute bottom-5 right-5 h-12 w-12 rounded-full transition-transform hover:scale-105 shadow-md shadow-primary/20"
+          disabled={isLoading || !theme.trim()}
+        >
+          {isLoading ? (
+            <Loader2 className="h-6 w-6 animate-spin" />
+          ) : (
+             <Sparkles className="h-6 w-6" />
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+}
