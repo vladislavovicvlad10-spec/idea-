@@ -42,6 +42,8 @@ export const translations = {
     savedIdeas: "Сохраненных идей",
     recentUsers: "Новые пользователи",
     topTopics: "Топ поисковых запросов",
+    rateLimitError: "Вы превысили лимит. Пожалуйста, подождите {time} мин.",
+    authRequired: "Авторизуйтесь, чтобы генерировать идеи.",
   },
   en: {
     title: "Unleash your",
@@ -84,6 +86,8 @@ export const translations = {
     savedIdeas: "Saved Ideas",
     recentUsers: "Recent Users",
     topTopics: "Top Search Queries",
+    rateLimitError: "You have exceeded the limit. Please wait {time} min.",
+    authRequired: "Please login to generate ideas.",
   },
   uk: {
     title: "Розкрийте свій",
@@ -126,6 +130,8 @@ export const translations = {
     savedIdeas: "Збережених ідей",
     recentUsers: "Нові користувачі",
     topTopics: "Топ пошукових запитів",
+    rateLimitError: "Ви перевищили ліміт. Будь ласка, зачекайте {time} хв.",
+    authRequired: "Авторизуйтесь, щоб генерувати ідеї.",
   }
 };
 

@@ -7,27 +7,32 @@ import { suggestTechStackFlow } from "@/ai/flows/suggest-tech-stack-flow";
 import { db } from "@/firebase";
 import { collection, addDoc, serverTimestamp, doc, updateDoc, increment, setDoc, getDoc } from "firebase/firestore";
 import { headers } from "next/headers";
+import { translations } from "@/lib/translations";
 
 // Global map for simple rate limiting (resets on server restart/cold start)
 const globalRateLimit = new Map<string, { count: number, resetTime: number }>();
 
-function checkRateLimit(ip: string, limit: number = 3, windowMs: number = 60000): boolean {
+function checkRateLimit(ip: string, limit: number = 3, windowMs: number = 60000): { allowed: boolean, remainingMs: number } {
   const now = Date.now();
   const record = globalRateLimit.get(ip);
   if (!record || now > record.resetTime) {
     globalRateLimit.set(ip, { count: 1, resetTime: now + windowMs });
-    return true;
+    return { allowed: true, remainingMs: 0 };
   }
-  if (record.count >= limit) return false;
+  if (record.count >= limit) {
+    return { allowed: false, remainingMs: record.resetTime - now };
+  }
   record.count++;
-  return true;
+  return { allowed: true, remainingMs: 0 };
 }
 
 export async function getIdeasAction(theme: string, lang?: string) {
   try {
     const ip = ((await headers()).get("x-forwarded-for") ?? "unknown").split(",")[0].trim();
-    if (!checkRateLimit(ip, 10, 60000 * 5)) { // max 10 requests per 5 minutes
-      return { success: false, error: "Вы превысили лимит генераций. Пожалуйста, подождите немного." };
+    const limitInfo = checkRateLimit(ip, 7, 60000 * 5); // 7 requests per 5 mins
+    if (!limitInfo.allowed) {
+      const mins = Math.ceil(limitInfo.remainingMs / 60000);
+      return { success: false, error: "RATE_LIMIT", remainingMins: mins };
     }
 
     const result = await generateAppIdeasFlow({ themeOrKeywords: theme, lang });
@@ -77,10 +82,16 @@ export async function getIdeasAction(theme: string, lang?: string) {
 
 
 
-export async function detailIdeaAction(idea: { name: string, description: string, features: string[] }) {
+export async function detailIdeaAction(idea: { name: string, description: string, features: string[] }, lang?: string) {
   try {
     const ip = ((await headers()).get("x-forwarded-for") ?? "unknown").split(",")[0].trim();
-    if (!checkRateLimit(ip, 15, 60000 * 5)) return { success: false, error: "Лимит запросов исчерпан." };
+    const limitInfo = checkRateLimit(ip, 15, 60000 * 5);
+    if (!limitInfo.allowed) {
+      const mins = Math.ceil(limitInfo.remainingMs / 60000);
+      const currentLang = (lang as "ru" | "en" | "uk") || "ru";
+      const errorMessage = translations[currentLang].rateLimitError.replace("{time}", mins.toString());
+      return { success: false, error: "RATE_LIMIT", message: errorMessage };
+    }
 
     const result = await detailAppIdeaFlow(idea);
     return { success: true, data: result };
@@ -89,10 +100,16 @@ export async function detailIdeaAction(idea: { name: string, description: string
   }
 }
 
-export async function suggestTechStackAction(idea: { name: string, description: string, features: string[] }) {
+export async function suggestTechStackAction(idea: { name: string, description: string, features: string[] }, lang?: string) {
   try {
     const ip = ((await headers()).get("x-forwarded-for") ?? "unknown").split(",")[0].trim();
-    if (!checkRateLimit(ip, 15, 60000 * 5)) return { success: false, error: "Лимит запросов исчерпан." };
+    const limitInfo = checkRateLimit(ip, 15, 60000 * 5);
+    if (!limitInfo.allowed) {
+      const mins = Math.ceil(limitInfo.remainingMs / 60000);
+      const currentLang = (lang as "ru" | "en" | "uk") || "ru";
+      const errorMessage = translations[currentLang].rateLimitError.replace("{time}", mins.toString());
+      return { success: false, error: "RATE_LIMIT", message: errorMessage };
+    }
 
     const result = await suggestTechStackFlow(idea);
     return { success: true, data: result };

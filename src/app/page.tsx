@@ -33,6 +33,9 @@ export default function Home() {
     if (result.success && result.data) {
        setIdeas(result.data);
        toast.success(t.toastSuccess);
+    } else if (result.error === "RATE_LIMIT") {
+       const msg = t.rateLimitError.replace("{time}", String(result.remainingMins));
+       toast.error(msg, { icon: "⏳" });
     } else {
        toast.error(result.error || t.toastError);
     }

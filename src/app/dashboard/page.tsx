@@ -65,7 +65,6 @@ export default function DashboardPage() {
         try {
           // 1. Fetch Users
           const usersSnap = await getDocs(collection(db, "users"));
-          const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as UserData));
           
           // 2. Fetch Recent Logins/Users
           const recentUsersQuery = query(collection(db, "users"), orderBy("createdAt", "desc"), limit(5));
@@ -73,7 +72,9 @@ export default function DashboardPage() {
           const recentUsers = recentUsersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as UserData));
           
           // 3. Fetch All Activity for aggregation
-          const allActivitySnap = await getDocs(collection(db, "activity_logs"));
+          const [allActivitySnap] = await Promise.all([
+            getDocs(collection(db, "activity_logs")),
+          ]);
           
           let totalIdeas = 0;
           const themes: Record<string, number> = {};
