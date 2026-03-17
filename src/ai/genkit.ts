@@ -78,6 +78,6 @@ export async function generateWithRotation<T>(
   };
 
   // Пользователь запросил FULL Llama-4 Scout без фоллбэков
-  // Если модель на Groq называется просто llama-4-scout-17b-16e-instruct, используем это имя
-  return await tryGroqModel("llama-4-scout-17b-16e-instruct");
+  // Возвращаем ту самую модель, по просьбе пользователя
+  return await tryGroqModel("meta-llama/llama-4-scout-17b-16e-instruct");
 }
