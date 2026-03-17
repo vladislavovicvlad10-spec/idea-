@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
-import { Bookmark, Sparkles, Code, Briefcase, Loader2, Check, Copy } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
+import { Bookmark, Sparkles, Code, Briefcase, Loader2, Check, Copy, Share2 } from "lucide-react";
 import { detailIdeaAction, suggestTechStackAction } from "@/app/actions";
+import { saveIdeaForSharing } from "@/app/idea/actions";
 import { toast } from "sonner";
 import { useAuth } from "@/firebase/provider";
 import { db } from "@/firebase";
@@ -21,7 +23,8 @@ export interface Idea {
 export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean }) {
   const { user } = useAuth();
   const [isSaved, setIsSaved] = useState(saved);
-  const [lang, setLang] = useState("ru");
+  const [isSharing, setIsSharing] = useState(false);
+  const [lang, setLang] = useState("en");
 
   useEffect(() => {
     const activeLang = localStorage.getItem("app_lang");
@@ -88,10 +91,25 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     }
   };
 
+  const handleShare = async () => {
+    setIsSharing(true);
+    try {
+      const id = await saveIdeaForSharing(idea);
+      const url = `${window.location.origin}/idea/${id}`;
+      await navigator.clipboard.writeText(url);
+      const shareMsg = lang === 'en' ? 'Link copied!' : lang === 'uk' ? 'Посилання скопійовано!' : 'Ссылка скопирована!';
+      toast.success(shareMsg);
+    } catch {
+      toast.error(t.toastError);
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   const fetchBusinessDetails = async () => {
     if (businessDetails) return;
     setIsBusinessLoading(true);
-    const result = await detailIdeaAction(idea);
+    const result = await detailIdeaAction(idea, lang);
     if (result.success && result.data) {
       setBusinessDetails(result.data as { targetAudience: string; monetization: string; uniqueness: string });
     } else {
@@ -103,7 +121,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
   const fetchTechStack = async () => {
     if (techStack) return;
     setIsTechLoading(true);
-    const result = await suggestTechStackAction(idea);
+    const result = await suggestTechStackAction(idea, lang);
     if (result.success && result.data) {
       setTechStack(result.data as { steps: { title: string; description: string }[] });
     } else {
@@ -121,6 +139,9 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
             <CardDescription className="text-muted-foreground mt-2 text-sm leading-relaxed">{idea.description}</CardDescription>
           </div>
           <div className="flex gap-2 shrink-0">
+            <Button variant="ghost" size="icon" onClick={handleShare} disabled={isSharing} title="Share" className="text-muted-foreground hover:text-accent">
+              {isSharing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-5 w-5" />}
+            </Button>
             <Button variant="ghost" size="icon" onClick={handleCopy} title="Copy" className="text-muted-foreground hover:text-accent">
               <Copy className="h-5 w-5" />
             </Button>
@@ -147,6 +168,16 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
           </ul>
         </div>
 
+        {isBusinessLoading && (
+          <div className="pt-4 border-t border-border/50 space-y-3 animate-in fade-in duration-300">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-5/6" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-4/5" />
+          </div>
+        )}
+
         {businessDetails && (
           <div className="pt-4 border-t border-border/50 animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
             <h4 className="text-sm font-bold text-foreground">{t.businessDetails}</h4>
@@ -164,6 +195,19 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
                 <p className="text-sm text-muted-foreground leading-snug">{businessDetails.uniqueness}</p>
               </div>
             </div>
+          </div>
+        )}
+
+        {isTechLoading && (
+          <div className="pt-4 border-t border-border/50 space-y-3 animate-in fade-in duration-300">
+            <Skeleton className="h-4 w-1/3" />
+            {[1,2,3].map(i => (
+              <div key={i} className="bg-secondary/40 p-3 rounded-xl border border-border/30 space-y-2">
+                <Skeleton className="h-3 w-1/4" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-5/6" />
+              </div>
+            ))}
           </div>
         )}
 

@@ -43,7 +43,8 @@ export default function DashboardPage() {
     conversionRate: 0
   });
   const [isFetching, setIsFetching] = useState(true);
-  const [lang, setLang] = useState("ru");
+  const [lang, setLang] = useState("en");
+  const [adminChecked, setAdminChecked] = useState(false);
 
   useEffect(() => {
     const savedLang = localStorage.getItem("app_lang");
@@ -55,12 +56,29 @@ export default function DashboardPage() {
   const t = getTranslation(lang);
 
   useEffect(() => {
-    if (!loading && (!user || user.email !== "gonv0791@gmail.com")) {
-      router.push("/");
-      return;
-    }
+    if (loading) return;
+    if (!user) { router.push("/"); return; }
 
-    if (user) {
+    // Admin check via server API — email never in client code
+    const checkAndLoad = async () => {
+      try {
+        const r = await fetch("/api/is-admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: user.email }),
+        });
+        const data = await r.json();
+        if (!data.isAdmin) { router.push("/"); return; }
+        setAdminChecked(true);
+      } catch {
+        router.push("/");
+      }
+    };
+    checkAndLoad();
+  }, [user, loading, router]);
+
+  useEffect(() => {
+    if (!adminChecked || !user) return;
       const fetchData = async () => {
         try {
           // 1. Fetch Users
@@ -129,8 +147,7 @@ export default function DashboardPage() {
         }
       };
       fetchData();
-    }
-  }, [user, loading, router]);
+  }, [adminChecked, user]);
 
   if (loading || isFetching) return (
     <div className="container mx-auto max-w-7xl py-12 px-4 space-y-8">
@@ -150,8 +167,8 @@ export default function DashboardPage() {
     const date = ts instanceof Timestamp ? ts.toDate() : new Date(ts);
     const now = new Date();
     const diff = Math.floor((now.getTime() - date.getTime()) / 1000 / 60);
-    if (diff < 1) return lang === 'en' ? "just now" : "только что";
-    if (diff < 60) return `${diff}m ${lang === 'en' ? 'ago' : 'назад'}`;
+    if (diff < 1) return t.justNow;
+    if (diff < 60) return `${diff}m ${t.ago}`;
     return date.toLocaleDateString();
   };
 
@@ -164,7 +181,7 @@ export default function DashboardPage() {
         </div>
         <div className="bg-primary/10 px-4 py-2 rounded-full border border-primary/20 flex items-center gap-2">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-sm font-medium text-primary">Live Connection</span>
+          <span className="text-sm font-medium text-primary">{t.liveConnection}</span>
         </div>
       </div>
 
@@ -173,25 +190,25 @@ export default function DashboardPage() {
           title={t.totalUsers}
           value={stats.totalUsers.toString()}
           icon={<Users className="w-5 h-5 text-blue-500" />}
-          trend="Real-time"
+          trend={t.realtime}
         />
         <StatCard
           title={t.totalIdeas}
           value={stats.totalIdeas.toString()}
           icon={<Lightbulb className="w-5 h-5 text-yellow-500" />}
-          trend="Atomic"
+          trend={t.atomic}
         />
         <StatCard
           title={t.activity24h}
           value={`${stats.recentActions.length}+`}
           icon={<TrendingUp className="w-5 h-5 text-green-500" />}
-          trend="Live"
+          trend={t.live}
         />
         <StatCard
           title={t.conversion}
           value={`${stats.conversionRate}%`}
           icon={<TrendingUp className="w-5 h-5 text-purple-500" />}
-          trend="Engagement"
+          trend={t.engagement}
         />
       </div>
 
@@ -214,9 +231,9 @@ export default function DashboardPage() {
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-foreground truncate max-w-[200px] md:max-w-md">
-                            {item.theme || 'System Action'}
+                            {item.theme || t.systemAction}
                           </p>
-                          <p className="text-[10px] text-muted-foreground">{item.count} items generated</p>
+                          <p className="text-[10px] text-muted-foreground">{item.count} {t.itemsGenerated}</p>
                         </div>
                     </div>
                     <span className="text-[10px] text-muted-foreground bg-secondary/50 px-2 py-1 rounded-md">
@@ -257,13 +274,13 @@ export default function DashboardPage() {
                 <CardHeader>
                     <CardTitle className="text-xl flex items-center gap-2">
                         <Globe className="w-5 h-5 text-purple-500" />
-                        Languages
+                        {t.languages}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <LangBar label="Russian" count={stats.langDistribution.ru} total={stats.totalIdeas} color="bg-blue-500" />
-                    <LangBar label="English" count={stats.langDistribution.en} total={stats.totalIdeas} color="bg-primary" />
-                    <LangBar label="Ukrainian" count={stats.langDistribution.uk} total={stats.totalIdeas} color="bg-yellow-500" />
+                    <LangBar label={t.langRu} count={stats.langDistribution.ru} total={stats.totalIdeas} color="bg-blue-500" />
+                    <LangBar label={t.langEn} count={stats.langDistribution.en} total={stats.totalIdeas} color="bg-primary" />
+                    <LangBar label={t.langUk} count={stats.langDistribution.uk} total={stats.totalIdeas} color="bg-yellow-500" />
                 </CardContent>
             </Card>
           </div>
@@ -295,8 +312,8 @@ export default function DashboardPage() {
             <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="w-6 h-6 text-primary" />
             </div>
-            <h4 className="font-bold text-primary mb-1">Growth Mode</h4>
-            <p className="text-[10px] text-muted-foreground">Monitoring all signals from the production database.</p>
+            <h4 className="font-bold text-primary mb-1">{t.growthMode}</h4>
+            <p className="text-[10px] text-muted-foreground">{t.growthModeDesc}</p>
           </Card>
         </div>
       </div>
@@ -341,10 +358,10 @@ function LangBar({ label, count, total, color }: { label: string, count: number,
         <div className="space-y-1">
             <div className="flex justify-between text-[10px] font-medium">
                 <span>{label}</span>
-                <span>{count} logs</span>
+                <span>{count} logs ({percent}%)</span>
             </div>
-            <div className="h-1 w-full bg-secondary/30 rounded-full">
-                <div className={`${color} h-full rounded-full`} style={{ width: `${percent}%` }} />
+            <div className="h-1.5 w-full bg-secondary/30 rounded-full">
+                <div className={`${color} h-full rounded-full transition-all duration-700`} style={{ width: `${percent}%` }} />
             </div>
         </div>
     )

@@ -4,8 +4,6 @@ import "./globals.css";
 import { AuthProvider } from "@/firebase/provider";
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
-import { LanguageSelector } from "@/components/language-selector";
-
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "cyrillic"],
@@ -47,7 +45,6 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased min-h-screen flex flex-col bg-background text-foreground`}
       >
         <AuthProvider>
-          <LanguageSelector />
           <Header />
             <main className="flex-1 flex flex-col w-full">
               {children}

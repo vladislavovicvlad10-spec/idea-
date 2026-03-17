@@ -33,7 +33,6 @@ if (globalForGenkit.geminiInstance === undefined) {
 }
 
 const groqInstances = globalForGenkit.groqInstances!;
-const geminiInstance = globalForGenkit.geminiInstance;
 
 export let currentKeyIndex = 0;
 
@@ -52,8 +51,7 @@ function isRateLimitError(error: unknown): boolean {
  * Режим ULTRA: Используем топовую Llama-4 Scout как основной движок.
  */
 export async function generateWithRotation<T>(
-  generateFn: (ai: Genkit, model: string) => Promise<T>,
-  priority: 'ultra' | 'fast' = 'ultra'
+  generateFn: (ai: Genkit, model: string) => Promise<T>
 ): Promise<T> {
   
   const tryGroqModel = async (modelName: string): Promise<T> => {
@@ -61,10 +59,11 @@ export async function generateWithRotation<T>(
     while (retries < groqInstances.length) {
       try {
         const ai = groqInstances[currentKeyIndex];
-        console.log(`[Llama-4 Mode] Пробуем Groq [${modelName}] (Ключ #${currentKeyIndex + 1})...`);
+        console.log(`[Llama-4 Full Mode] Пытаемся вызвать Groq [${modelName}] через ключ #${currentKeyIndex + 1}...`);
         return await generateFn(ai, `groq/${modelName}`);
       } catch (error) {
         if (isRateLimitError(error)) {
+          console.warn(`[Llama-4 Full Mode] Ключ #${currentKeyIndex + 1} под лимитом, пробуем следующий...`);
           currentKeyIndex = (currentKeyIndex + 1) % groqInstances.length;
           retries++;
         } else {
@@ -75,36 +74,10 @@ export async function generateWithRotation<T>(
         }
       }
     }
-    throw new Error(`${modelName} недоступна`);
+    throw new Error(`${modelName} недоступна из-за лимитов на всех ключах.`);
   };
 
-  const tryGeminiPro = async (): Promise<T> => {
-    if (!geminiInstance) throw new Error("Gemini не настроен");
-    console.log(`[Llama-4 Mode] Фоллбэк на Google Gemini 1.5 PRO...`);
-    return await generateFn(geminiInstance, "googleai/gemini-1.5-pro");
-  };
-
-  if (priority === 'ultra') {
-    try {
-      // 1. СТАРТУЕМ С LLAMA-4 SCOUT (то, что просил юзер)
-      return await tryGroqModel("meta-llama/llama-4-scout-17b-16e-instruct");
-    } catch {
-      console.warn("Llama-4 занята или под лимитами, идем в Gemini PRO...");
-      try {
-        // 2. ФОЛЛБЭК НА GEMINI PRO
-        return await tryGeminiPro();
-      } catch {
-        console.warn("Gemini PRO тоже недоступна, берем Llama-3.3...");
-        // 3. ФОНОВЫЙ ВАРИАНТ
-        return await tryGroqModel("llama-3.3-70b-versatile");
-      }
-    }
-  } else {
-    try {
-      if (!geminiInstance) return await tryGroqModel("llama-3.1-8b-instant");
-      return await generateFn(geminiInstance, "googleai/gemini-1.5-flash");
-    } catch {
-      return await tryGroqModel("llama-3.1-8b-instant");
-    }
-  }
+  // Пользователь запросил FULL Llama-4 Scout без фоллбэков
+  // Если модель на Groq называется просто llama-4-scout-17b-16e-instruct, используем это имя
+  return await tryGroqModel("llama-4-scout-17b-16e-instruct");
 }

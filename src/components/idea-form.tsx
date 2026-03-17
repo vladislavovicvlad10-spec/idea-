@@ -13,7 +13,7 @@ interface IdeaFormProps {
 
 export function IdeaForm({ onGenerate, isLoading }: IdeaFormProps) {
   const [theme, setTheme] = useState("");
-  const [lang, setLang] = useState("ru");
+  const [lang, setLang] = useState("en");
   const { user } = useAuth();
 
   useEffect(() => {

@@ -12,7 +12,7 @@ import { getTranslation } from "@/lib/translations";
 export default function Home() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [lang, setLang] = useState("ru");
+  const [lang, setLang] = useState("en");
 
   useEffect(() => {
     const savedLang = localStorage.getItem("app_lang");
