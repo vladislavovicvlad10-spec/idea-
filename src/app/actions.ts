@@ -120,16 +120,10 @@ export async function getIdeasAction(theme: string, lang?: string) {
     return { success: true, data: result.ideas };
   } catch (err) {
     console.error("GENKIT_ERROR:", err);
-    let errorMessage = "Неизвестная ошибка";
-    if (err instanceof Error) {
-      if (err.message.includes("429")) {
-        errorMessage = "Лимит запросов исчерпан. Система переключится на другой ключ, попробуйте ещё раз.";
-      } else if (err.message.includes("404")) {
-        errorMessage = "Модель ИИ не найдена или недоступна в вашем регионе.";
-      } else {
-        errorMessage = err.message;
-      }
+    if (err instanceof Error && err.message === "RATE_LIMIT_ALL_ENGINES") {
+      return { success: false, error: "RATE_LIMIT_AI_GLOBAL" };
     }
+    const errorMessage = err instanceof Error ? err.message : "Неизвестная ошибка";
     return { success: false, error: errorMessage };
   }
 }

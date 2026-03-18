@@ -107,21 +107,25 @@ export async function generateWithRotation<T>(
 
   try {
     return await tryGroqModel("meta-llama/llama-4-scout-17b-16e-instruct");
-  } catch (error) {
+  } catch {
     if (togetherKey) {
       console.warn(`[Llama-4 Full Mode] Все ключи Groq под лимитами, переключаемся на Together AI как фоллбэк...`);
-      
-      return await generateFn({
-        generate: async (options: { prompt: string }) => {
-          const content = await callTogetherAI(options.prompt);
-          try {
-            return { output: JSON.parse(content) };
-          } catch {
-            return { output: content };
+      try {
+        return await generateFn({
+          generate: async (options: { prompt: string }) => {
+            const content = await callTogetherAI(options.prompt);
+            try {
+              return { output: JSON.parse(content) };
+            } catch {
+              return { output: content };
+            }
           }
-        }
-      } as unknown as Genkit, "together");
+        } as unknown as Genkit, "together");
+      } catch (togetherError) {
+        console.error(`[Together AI Error] ${togetherError}`);
+        throw new Error("RATE_LIMIT_ALL_ENGINES");
+      }
     }
-    throw error;
+    throw new Error("RATE_LIMIT_ALL_ENGINES");
   }
 }

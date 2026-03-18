@@ -46,6 +46,8 @@ export default function Home() {
     } else if (result.error === "RATE_LIMIT") {
        const msg = t.rateLimitError.replace("{time}", String(result.remainingMins));
        toast.error(msg, { icon: "⏳" });
+    } else if (result.error === "RATE_LIMIT_AI_GLOBAL") {
+       toast.error(t.rateLimitAll, { icon: "🚀" });
     } else {
        toast.error(result.error || t.toastError);
     }

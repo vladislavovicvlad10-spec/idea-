@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/firebase/provider";
@@ -7,6 +7,7 @@ import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import { Footer } from "@/components/footer";
 import { CookieBanner } from "@/components/cookie-banner";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "cyrillic"],
@@ -33,8 +34,12 @@ export const metadata: Metadata = {
     title: "IdeaSpark | AI Startup Generator",
     description: "Turn your ideas into detailed startup roadmaps with one click.",
   },
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
