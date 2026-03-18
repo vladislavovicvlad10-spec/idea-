@@ -26,7 +26,6 @@ export interface Idea {
   techStack?: {
     steps: { title: string; description: string }[];
   };
-  notes?: string;
 }
 
 export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean }) {
@@ -47,13 +46,12 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
   } | null>(idea.techStack || null);
   const [isTechLoading, setIsTechLoading] = useState(false);
 
-  const [notes, setNotes] = useState(idea.notes || "");
+
 
   const getFullIdea = (): Idea => ({
     ...idea,
     businessDetails: businessDetails || undefined,
-    techStack: techStack || undefined,
-    notes: notes || undefined
+    techStack: techStack || undefined
   });
 
   const handleBookmark = async () => {
@@ -136,11 +134,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     }
   };
 
-  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const val = e.target.value;
-    setNotes(val);
-    updateLocalStorage("notes", val);
-  };
+
 
   const fetchBusinessDetails = async () => {
     if (businessDetails) return;
@@ -264,17 +258,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
             </div>
           </div>
         )}
-        <div className="pt-4 border-t border-border/50 animate-in fade-in duration-300">
-          <label className="text-xs font-bold text-muted-foreground block mb-2 uppercase tracking-wider">
-            {t.myNotes}
-          </label>
-          <textarea
-            value={notes}
-            onChange={handleNotesChange}
-            placeholder={t.notesPlaceholder}
-            className="w-full bg-secondary/20 border border-border/30 rounded-lg p-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 resize-y min-h-[80px] transition-all"
-          />
-        </div>
+
       </CardContent>
 
       <CardFooter className="flex flex-wrap gap-2 pt-4 pb-4 bg-secondary/10 border-t border-border/20">
