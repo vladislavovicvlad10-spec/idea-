@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { getTranslation } from "./translations";
 
 type LangContextType = {
@@ -16,12 +16,18 @@ const LangContext = createContext<LangContextType>({
 });
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("app_lang") || "ru";
-    }
-    return "ru";
-  });
+  const [lang, setLangState] = useState("ru");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsMounted(true);
+      const storedLang = localStorage.getItem("app_lang");
+      if (storedLang) {
+        setLangState(storedLang);
+      }
+    }, 0);
+  }, []);
 
   const setLang = (newLang: string) => {
     localStorage.setItem("app_lang", newLang);
@@ -33,7 +39,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
   return (
     <LangContext.Provider value={{ lang, setLang, t }}>
-      {children}
+      {isMounted ? children : <div className="min-h-screen" style={{ visibility: "hidden" }}>{children}</div>}
     </LangContext.Provider>
   );
 }

@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/firebase/provider";
+import { LangProvider } from "@/lib/lang-context";
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
+import { Footer } from "@/components/footer";
+import { CookieBanner } from "@/components/cookie-banner";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "cyrillic"],
@@ -45,11 +48,15 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased min-h-screen flex flex-col bg-background text-foreground`}
       >
         <AuthProvider>
-          <Header />
+          <LangProvider>
+            <Header />
             <main className="flex-1 flex flex-col w-full">
               {children}
             </main>
-          <Toaster position="bottom-right" />
+            <Footer />
+            <CookieBanner />
+            <Toaster position="bottom-right" />
+          </LangProvider>
         </AuthProvider>
       </body>
     </html>
