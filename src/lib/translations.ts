@@ -141,6 +141,11 @@ export const translations = {
     privacy4Text: "Вы обладаете полным 'Правом на забвение'. Удаление аккаунта навсегда стирает ваш профиль и все сохраненные идеи из нашей базы данных.",
     privacy5Title: "Изменения политики",
     privacy5Text: "Мы оставляем за собой право периодически обновлять данную Политику. Существенные изменения вступают в силу сразу после публикации.",
+    myNotes: "Мои заметки",
+    notesPlaceholder: "Добавьте свои мысли по этой идее здесь...",
+    lastUpdated: "Последнее обновление",
+    contactUs: "Связаться с нами",
+    march2026: "Март 2026",
   },
   en: {
     title: "Unleash your",
@@ -282,6 +287,11 @@ export const translations = {
     privacy4Text: "You have the full 'Right to be forgotten'. Deleting your account permanently erases your profile and all saved ideas from our database.",
     privacy5Title: "Changes to Policy",
     privacy5Text: "We reserve the right to periodically update this Policy. Substantial changes take effect immediately upon publication.",
+    myNotes: "My Notes",
+    notesPlaceholder: "Add your thoughts about this idea here...",
+    lastUpdated: "Last updated",
+    contactUs: "Contact us",
+    march2026: "March 2026",
   },
   uk: {
     title: "Розкрийте свій",
@@ -423,7 +433,12 @@ export const translations = {
     privacy4Text: "Ви маєте повне 'Право на забуття'. Видалення акаунта назавжди стирає ваш профіль і всі збережені ідеї з нашої бази даних.",
     privacy5Title: "Зміни політики",
     privacy5Text: "Ми залишаємо за собою право оновлювати цю Політику. Суттєві зміни набувають чинності відразу після публікації.",
-  }
+    myNotes: "Мої нотатки",
+    notesPlaceholder: "Додайте свої думки щодо цієї ідеї тут...",
+    lastUpdated: "Останнє оновлення",
+    contactUs: "Зв'язатися з нами",
+    march2026: "Березень 2026",
+  },
 };
 
 export function getTranslation(lang: string | null) {

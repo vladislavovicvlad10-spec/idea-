@@ -2,19 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { useLang } from "@/lib/lang-context";
-import { getTranslation } from "@/lib/translations";
 import Link from "next/link";
+import { Cookie, X } from "lucide-react";
+import { Button } from "./ui/button";
 
 export function CookieBanner() {
-  const { lang } = useLang();
-  const t = getTranslation(lang);
+  const { t } = useLang();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Проверяем, соглашался ли уже пользователь
     const consent = localStorage.getItem("cookie_consent");
     if (!consent) {
-      setTimeout(() => setIsVisible(true), 100);
+      const timer = setTimeout(() => setIsVisible(true), 1500); // Показываем чуть позже для эффекта
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -26,21 +26,42 @@ export function CookieBanner() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:p-6 animate-in slide-in-from-bottom duration-500 ease-out">
-          <div className="max-w-7xl mx-auto bg-zinc-900/90 backdrop-blur-xl border border-white/10 p-4 md:p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-2xl">
-            <div className="text-sm text-zinc-300">
-              {t.cookieMessage}{" "}
-              <Link href="/privacy" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">
-                {t.privacyPolicy}
-              </Link>
-            </div>
-            <button
-              onClick={handleAccept}
-              className="bg-white text-black px-6 py-2 rounded-xl font-medium hover:bg-zinc-200 transition-colors whitespace-nowrap min-w-full md:min-w-0"
-            >
-              {t.cookieAccept}
-            </button>
-          </div>
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] max-w-2xl animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out px-4 md:px-0">
+      <div className="bg-card/90 backdrop-blur-xl border border-primary/20 p-5 md:p-6 rounded-3xl flex flex-col md:flex-row items-center gap-5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+        {/* Декоративное свечение */}
+        <div className="absolute -top-10 -left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors" />
+        
+        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20">
+          <Cookie className="w-6 h-6 text-primary animate-pulse" />
+        </div>
+
+        <div className="flex-grow text-center md:text-left">
+          <p className="text-sm md:text-base text-foreground/90 leading-relaxed font-medium">
+            {t.cookieMessage}
+          </p>
+          <Link 
+            href="/privacy" 
+            className="text-xs text-primary hover:text-accent font-bold mt-2 inline-block transition-colors underline underline-offset-4"
+          >
+            {t.privacyPolicy}
+          </Link>
+        </div>
+
+        <div className="flex shrink-0 gap-2 w-full md:w-auto">
+          <Button
+            onClick={handleAccept}
+            className="flex-1 md:flex-none h-11 px-8 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 active:scale-95 transition-all"
+          >
+            {t.cookieAccept}
+          </Button>
+          <button 
+            onClick={() => setIsVisible(false)}
+            className="md:hidden absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

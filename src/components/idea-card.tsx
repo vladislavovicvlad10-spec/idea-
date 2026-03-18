@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
@@ -11,41 +11,50 @@ import { toast } from "sonner";
 import { useAuth } from "@/firebase/provider";
 import { db } from "@/firebase";
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { getTranslation } from "@/lib/translations";
+import { useLang } from "@/lib/lang-context";
 
 export interface Idea {
   id?: string;
   name: string;
   description: string;
   features: string[];
+  businessDetails?: {
+    targetAudience: string;
+    monetization: string;
+    uniqueness: string;
+  };
+  techStack?: {
+    steps: { title: string; description: string }[];
+  };
+  notes?: string;
 }
 
 export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean }) {
   const { user } = useAuth();
+  const { lang, t } = useLang();
   const [isSaved, setIsSaved] = useState(saved);
   const [isSharing, setIsSharing] = useState(false);
-  const [lang, setLang] = useState("en");
-
-  useEffect(() => {
-    const activeLang = localStorage.getItem("app_lang");
-    if (activeLang) {
-      setTimeout(() => setLang(activeLang), 0);
-    }
-  }, []);
-
-  const t = getTranslation(lang);
 
   const [businessDetails, setBusinessDetails] = useState<{
     targetAudience: string;
     monetization: string;
     uniqueness: string;
-  } | null>(null);
+  } | null>(idea.businessDetails || null);
   const [isBusinessLoading, setIsBusinessLoading] = useState(false);
 
   const [techStack, setTechStack] = useState<{
     steps: { title: string; description: string }[];
-  } | null>(null);
+  } | null>(idea.techStack || null);
   const [isTechLoading, setIsTechLoading] = useState(false);
+
+  const [notes, setNotes] = useState(idea.notes || "");
+
+  const getFullIdea = (): Idea => ({
+    ...idea,
+    businessDetails: businessDetails || undefined,
+    techStack: techStack || undefined,
+    notes: notes || undefined
+  });
 
   const handleBookmark = async () => {
     if (!user) {
@@ -68,7 +77,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
         toast.success(t.removedFromBookmarks);
       } else {
         await addDoc(bookmarksRef, {
-          ...idea,
+          ...getFullIdea(),
           savedAt: new Date().toISOString()
         });
         setIsSaved(true);
@@ -81,7 +90,15 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
   };
 
   const handleCopy = async () => {
-    const content = `${idea.name}\n${idea.description}\n\n${idea.features.map(f => `- ${f}`).join('\n')}`;
+    const full = getFullIdea();
+    let content = `${full.name}\n${full.description}\n\n${full.features.map(f => `- ${f}`).join('\n')}`;
+    
+    if (full.businessDetails) {
+      content += `\n\n${t.businessDetails}:\n- ${t.targetAudience}: ${full.businessDetails.targetAudience}\n- ${t.monetization}: ${full.businessDetails.monetization}\n- ${t.uniqueness}: ${full.businessDetails.uniqueness}`;
+    }
+    if (full.techStack) {
+      content += `\n\n${t.techSteps}:\n${full.techStack.steps.map((s, i) => `${i+1}. ${s.title} - ${s.description}`).join('\n')}`;
+    }
 
     try {
       await navigator.clipboard.writeText(content);
@@ -94,7 +111,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
   const handleShare = async () => {
     setIsSharing(true);
     try {
-      const id = await saveIdeaForSharing(idea);
+      const id = await saveIdeaForSharing(getFullIdea());
       const url = `${window.location.origin}/idea/${id}`;
       await navigator.clipboard.writeText(url);
       const shareMsg = lang === 'en' ? 'Link copied!' : lang === 'uk' ? 'Посилання скопійовано!' : 'Ссылка скопирована!';
@@ -106,12 +123,33 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     }
   };
 
+  const updateLocalStorage = (field: keyof Idea, data: unknown) => {
+    try {
+      const stored = localStorage.getItem("lastIdeas");
+      if (stored) {
+        const parsed = JSON.parse(stored) as Idea[];
+        const newIdeas = parsed.map(i => i.name === idea.name ? { ...i, [field]: data } : i);
+        localStorage.setItem("lastIdeas", JSON.stringify(newIdeas));
+      }
+    } catch {
+      // Игнорируем ошибки localStorage (например, в режиме инкогнито или переполнения)
+    }
+  };
+
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    setNotes(val);
+    updateLocalStorage("notes", val);
+  };
+
   const fetchBusinessDetails = async () => {
     if (businessDetails) return;
     setIsBusinessLoading(true);
     const result = await detailIdeaAction(idea, lang);
     if (result.success && result.data) {
-      setBusinessDetails(result.data as { targetAudience: string; monetization: string; uniqueness: string });
+      const data = result.data as { targetAudience: string; monetization: string; uniqueness: string };
+      setBusinessDetails(data);
+      updateLocalStorage("businessDetails", data);
     } else {
       toast.error(t.toastError);
     }
@@ -123,7 +161,9 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     setIsTechLoading(true);
     const result = await suggestTechStackAction(idea, lang);
     if (result.success && result.data) {
-      setTechStack(result.data as { steps: { title: string; description: string }[] });
+      const data = result.data as { steps: { title: string; description: string }[] };
+      setTechStack(data);
+      updateLocalStorage("techStack", data);
     } else {
       toast.error(t.toastError);
     }
@@ -224,6 +264,17 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
             </div>
           </div>
         )}
+        <div className="pt-4 border-t border-border/50 animate-in fade-in duration-300">
+          <label className="text-xs font-bold text-muted-foreground block mb-2 uppercase tracking-wider">
+            {t.myNotes}
+          </label>
+          <textarea
+            value={notes}
+            onChange={handleNotesChange}
+            placeholder={t.notesPlaceholder}
+            className="w-full bg-secondary/20 border border-border/30 rounded-lg p-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 resize-y min-h-[80px] transition-all"
+          />
+        </div>
       </CardContent>
 
       <CardFooter className="flex flex-wrap gap-2 pt-4 pb-4 bg-secondary/10 border-t border-border/20">

@@ -19,6 +19,15 @@ export default function Home() {
     if (savedLang) {
       setTimeout(() => setLang(savedLang), 0);
     }
+    const savedIdeas = localStorage.getItem("lastIdeas");
+    if (savedIdeas) {
+      try {
+        const parsed = JSON.parse(savedIdeas) as Idea[];
+        setTimeout(() => setIdeas(parsed), 0);
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }, []);
 
   const t = getTranslation(lang);
@@ -32,6 +41,7 @@ export default function Home() {
     
     if (result.success && result.data) {
        setIdeas(result.data);
+       localStorage.setItem("lastIdeas", JSON.stringify(result.data));
        toast.success(t.toastSuccess);
     } else if (result.error === "RATE_LIMIT") {
        const msg = t.rateLimitError.replace("{time}", String(result.remainingMins));

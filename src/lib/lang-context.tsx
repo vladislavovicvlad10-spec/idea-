@@ -10,13 +10,13 @@ type LangContextType = {
 };
 
 const LangContext = createContext<LangContextType>({
-  lang: "ru",
+  lang: "en",
   setLang: () => {},
-  t: getTranslation("ru"),
+  t: getTranslation("en"),
 });
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState("ru");
+  const [lang, setLangState] = useState("en");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -25,6 +25,8 @@ export function LangProvider({ children }: { children: ReactNode }) {
       const storedLang = localStorage.getItem("app_lang");
       if (storedLang) {
         setLangState(storedLang);
+      } else {
+        localStorage.setItem("app_lang", "en");
       }
     }, 0);
   }, []);

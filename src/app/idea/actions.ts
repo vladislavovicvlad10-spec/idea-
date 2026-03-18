@@ -9,13 +9,11 @@ export async function saveIdeaForSharing(idea: Idea): Promise<string> {
   const id = Buffer.from(idea.name).toString("base64url").slice(0, 20);
   const ref = doc(db, "shared_ideas", id);
   
-  const existing = await getDoc(ref);
-  if (!existing.exists()) {
-    await setDoc(ref, {
-      ...idea,
-      createdAt: new Date().toISOString(),
-    });
-  }
+  // Всегда перезаписываем (overwrite), чтобы обновлять данные (например, если добавились детали)
+  await setDoc(ref, {
+    ...idea,
+    updatedAt: new Date().toISOString(),
+  });
   
   return id;
 }
