@@ -22,6 +22,7 @@ export interface Idea {
     targetAudience: string;
     monetization: string;
     uniqueness: string;
+    marketPerspective?: string;
   };
   techStack?: {
     steps: { title: string; description: string }[];
@@ -38,6 +39,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     targetAudience: string;
     monetization: string;
     uniqueness: string;
+    marketPerspective?: string;
   } | null>(idea.businessDetails || null);
   const [isBusinessLoading, setIsBusinessLoading] = useState(false);
 
@@ -45,8 +47,6 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     steps: { title: string; description: string }[];
   } | null>(idea.techStack || null);
   const [isTechLoading, setIsTechLoading] = useState(false);
-
-
 
   const getFullIdea = (): Idea => ({
     ...idea,
@@ -93,6 +93,9 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     
     if (full.businessDetails) {
       content += `\n\n${t.businessDetails}:\n- ${t.targetAudience}: ${full.businessDetails.targetAudience}\n- ${t.monetization}: ${full.businessDetails.monetization}\n- ${t.uniqueness}: ${full.businessDetails.uniqueness}`;
+      if (full.businessDetails.marketPerspective) {
+        content += `\n- ${t.marketPerspective}: ${full.businessDetails.marketPerspective}`;
+      }
     }
     if (full.techStack) {
       content += `\n\n${t.techSteps}:\n${full.techStack.steps.map((s, i) => `${i+1}. ${s.title} - ${s.description}`).join('\n')}`;
@@ -134,14 +137,12 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     }
   };
 
-
-
   const fetchBusinessDetails = async () => {
     if (businessDetails) return;
     setIsBusinessLoading(true);
     const result = await detailIdeaAction(idea, lang);
     if (result.success && result.data) {
-      const data = result.data as { targetAudience: string; monetization: string; uniqueness: string };
+      const data = result.data as { targetAudience: string; monetization: string; uniqueness: string; marketPerspective: string };
       setBusinessDetails(data);
       updateSessionStorage("businessDetails", data);
     } else {
@@ -228,6 +229,12 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
                 <span className="text-xs font-semibold text-primary block mb-1">{t.uniqueness}</span>
                 <p className="text-sm text-muted-foreground leading-snug">{businessDetails.uniqueness}</p>
               </div>
+              {businessDetails.marketPerspective && (
+                <div>
+                  <span className="text-xs font-semibold text-primary block mb-1">{t.marketPerspective}</span>
+                  <p className="text-sm text-muted-foreground leading-snug">{businessDetails.marketPerspective}</p>
+                </div>
+              )}
             </div>
           </div>
         )}

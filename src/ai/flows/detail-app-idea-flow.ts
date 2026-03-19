@@ -5,6 +5,7 @@ const OutputSchema = z.object({
   targetAudience: z.string(),
   monetization: z.string(),
   uniqueness: z.string(),
+  marketPerspective: z.string(),
 });
 
 export const detailAppIdeaFlow = async (input: { name: string; description: string; features: string[]; lang?: string }) => {
@@ -23,6 +24,7 @@ export const detailAppIdeaFlow = async (input: { name: string; description: stri
     1. Target Audience: Describe the "ideal customers" in one dense, juicy paragraph. Who are they, what is their main pain point, and why will they buy this product.
     2. Monetization: Describe the revenue strategy. Not just a list, but a logical scheme (e.g.: "Freemium model with a focus on enterprise subscriptions and a commission from each transaction").
     3. Uniqueness (USP): Formulate the killer feature and market advantage. Why will competitors be left behind?
+    4. Market Perspective: Briefly describe current market trends, potential competitors, and key risks to consider.
 
     STYLE: Business, expert, devoid of fluff. Only essence and strategy. LANGUAGE: English.`;
     } else if (lang === 'uk') {
@@ -35,6 +37,7 @@ export const detailAppIdeaFlow = async (input: { name: string; description: stri
     1. Цільова аудиторія: Опиши "ідеальних клієнтів" одним щільним, соковитим абзацом. Хто вони, яка в них головна біль і чому вони куплять цей продукт.
     2. Монетизація: Опиши стратегію заробітку. Не просто список, а логічну схему (наприклад: "Freemium-модель з акцентом на корпоративні підписки та комісію з кожної транзакції").
     3. Унікальність (УТП): Сформулюй кілер-фічу та ринкову перевагу. Чому конкуренти залишаться позаду?
+    4. Ринкова перспектива: Коротко опишіть поточні ринкові тенденції, потенційних конкурентів та ключові ризики, які слід врахувати.
 
     СТИЛЬ: Діловий, експертний, без зайвої води. Тільки суть і стратегія. МОВА: Українська.`;
     } else {
@@ -45,10 +48,11 @@ export const detailAppIdeaFlow = async (input: { name: string; description: stri
 
     ТРЕБОВАНИЯ К ОТВЕТУ:
     1. Целевая аудитория: Опиши "идеальных клиентов" одним плотным, сочным абзацем. Кто они, какая у них главная боль и почему они купят этот продукт.
-    2. Монетизация: Опиши стратегию заработка. Не просто список, а логичную схему (например: "Фримиум-модель с упором на корпоративные подписки и комиссию с каждой транзакции").
+    2. Монетизация: Опиши стратегии заработка. Не просто список, а логичную схему (например: "Фримиум-модель с упором на корпоративные подписки и комиссию с каждой транзакции").
     3. Уникальность (УТП): Сформулируй киллер-фичу и рыночное преимущество. Почему конкуренты останутся позади?
+    4. Рыночная перспектива: Кратко опишите текущие рыночные тенденции, потенциальных конкурентов и ключевые риски, которые следует учитывать.
 
-    СТИЛЬ: Деловой, экспертный, лишенный воды. Только суть и стратегия. ЯЗЫК: Русский.`;
+    STYLE: Деловой, экспертный, лишенный воды. Только суть и стратегия. ЯЗЫК: Русский.`;
     }
 
     const result = await ai.generate({

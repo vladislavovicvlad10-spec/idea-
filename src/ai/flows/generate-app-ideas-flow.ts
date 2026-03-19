@@ -31,6 +31,12 @@ export const generateAppIdeasFlow = async (input: { themeOrKeywords: string, lan
       
       RULE #4 (FEATURES): 5 items. Each feature is not just a name, but a detailed explanation (min 12-15 words) of how it works inside.
       
+      RULE #5 (TECH ARCHITECTURE): 
+      - If it is a 3D/Action game, NEVER suggest Next.js/React as core. Suggest Unreal Engine 5 or Unity.
+      - If Multiplayer: specify server-side authority or matchmaking ideas.
+      - For real-time AI in games, NEVER suggest OpenAI. Suggest Local AI, Behavior Trees, or Unity Sentis.
+      - Meta-services (profiles, store) can remain on FastAPI/Next.js.
+      
       FORMAT: JSON.`;
     } else if (lang === 'uk') {
       prompt = `Згенеруй 3 справді КРУТИХ і масштабних стартапи на тему: "${input.themeOrKeywords}".
@@ -48,6 +54,12 @@ export const generateAppIdeasFlow = async (input: { themeOrKeywords: string, lan
 
       ПРАВИЛО №4 (ФІЧІ): 5 штук. Кожна фіча — це не просто назва, а детальне пояснення (мінімум 12-15 слів), як вона працює всередині.
 
+      ПРАВИЛО №5 (ТЕХНІЧНА АРХІТЕКТУРА):
+      - Якщо це 3D/Action гра, НІКОЛИ не пропонуй Next.js/React як основу. Пропонуй Unreal Engine 5 або Unity.
+      - Якщо Мультиплеєр: вказуй на серверний авторитет або систему матчмейкінгу.
+      - Для ШІ в реальному часі в іграх НІКОЛИ не пропонуй OpenAI. Пропонуй Behavior Trees або локальні моделі.
+      - Веб-сервіси (профілі, магазин) можуть залишатися на FastAPI/Next.js.
+
       ФОРМАТ: JSON.`;
     } else {
       prompt = `Сгенерируй 3 по-настоящему КРУТЫХ и масштабных стартапа на тему: "${input.themeOrKeywords}".
@@ -64,6 +76,12 @@ export const generateAppIdeasFlow = async (input: { themeOrKeywords: string, lan
       - Добавляй детали про интерфейс и UX: "элегантный темный режим", "интуитивные жесты", "реальное время", "умные алгоритмы".
 
       ПРАВИЛО №4 (ФИШКИ): 5 штук. Каждая фишка — это не просто название, а подробное объяснение (минимум 12-15 слов), как она работает внутри.
+
+      ПРАВИЛО №5 (ТЕХНИЧЕСКАЯ АРХИТЕКТУРА): 
+      - Если это 3D/Action игра, НИКОГДА не предлагай Next.js/React как ядро системы. Предлагай Unreal Engine 5 или Unity.
+      - Если Мультиплеер: упоминай серверный авторитет или системы матчмейкинга.
+      - Для ИИ в реальном времени в играх НИКОГДА не предлагай OpenAI API. Предлагай Behavior Trees или локальные модели.
+      - Веб-сервисы (профили, магазин) могут оставаться на FastAPI/Next.js.
 
       ФОРМАТ: JSON.`;
     }

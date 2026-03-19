@@ -145,6 +145,7 @@ export const translations = {
     lastUpdated: "Последнее обновление",
     contactUs: "Связаться с нами",
     march2026: "Март 2026",
+    marketPerspective: "Рыночная перспектива:",
   },
   en: {
     title: "Unleash your",
@@ -290,6 +291,7 @@ export const translations = {
     lastUpdated: "Last updated",
     contactUs: "Contact us",
     march2026: "March 2026",
+    marketPerspective: "Market Perspective:",
   },
   uk: {
     title: "Розкрийте свій",
@@ -435,6 +437,7 @@ export const translations = {
     lastUpdated: "Останнє оновлення",
     contactUs: "Зв'язатися з нами",
     march2026: "Березень 2026",
+    marketPerspective: "Ринкова перспектива:",
   },
 };
 

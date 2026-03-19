@@ -15,41 +15,74 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
     let prompt: string;
 
     if (lang === 'en') {
-      prompt = `You are an experienced CTO. Design the technical foundation and roadmap for the startup: "${input.name}".
+      prompt = `You are an experienced CTO and Software Architect. Design a precise technical foundation for: "${input.name}".
     Description: ${input.description}.
     
-    CREATE 5 SPECIFIC STEPS (Headings should be short and powerful):
-    1. Core Stack: Choose the main stack (Frontend/Backend/DB) with a short rationale. Suggest only modern and scalable solutions (Next.js, FastAPI, Node.js, Go, PostgreSQL, Redis, etc.).
-    2. Infrastructure: Cloud, containerization, and CI/CD (Docker, AWS/GCP, GitHub Actions).
-    3. AI Engine: How exactly to implement intelligence (OpenAI API, local models via Ollama, LangChain, vector bases like Pinecone).
-    4. Data & Architecture: Describe the architectural pattern (microservices, monolith, serverless).
-    5. MVP Milestone: The main technical goal of the first release.
+    RESPONSE STRUCTURE (5 steps):
+    1. Core Stack (FE, BE, Database)
+    2. Cloud & Infrastructure (Hosting, CI/CD, Containers)
+    3. AI Implementation (Be specific about models, libraries, and architecture)
+    4. Scaling & Performance (Caching, Load balancing, DB optimization)
+    5. Security & Compliance (Auth, Data protection, Standards)
 
-    STYLE: Technical, clear, without extra words. Only specific libraries and tools. LANGUAGE: English.`;
+    DEEP ARCHITECTURAL RULES (SMART CTO LOGIC): 
+    - 3D GAMES: Unreal Engine 5 (C++) or Unity (C#). Local AI (Behavior Trees).
+    - MULTIPLAYER: Game servers (Go/C++), WebSockets/UDP, Tick rate optimizations.
+    - STRATEGY: ECS pattern for massive unit counts.
+    - RPG: Database-heavy inventory systems, Quest/Dialogue graph engines.
+    - B2B SAAS: Multi-tenancy, Row-level security in DB, Stripe integration.
+    - MARKETPLACE: ElasticSearch/Algolia for search, Redis for real-time inventory.
+    - CONTENT/STREAMING: CDN (CloudFront), HLS/DASH, Edge functions for low latency.
+    - FINTECH: PostgreSQL (ACID), PCI-DSS, double-entry bookkeeping logic.
+    - AI APPS: RAG architecture (Vector DBs like Pinecone/Milvus), streaming LLM responses.
+
+    STYLE: Pro-level, technical, dense. Only specific tech. LANGUAGE: English.`;
     } else if (lang === 'uk') {
-      prompt = `Ти — досвідчений CTO. Спроектуй технічний фундамент і дорожню карту для стартапу: "${input.name}".
+      prompt = `Ти — досвідчений CTO та архітектор ПЗ. Спроектуй точний технічний фундамент для: "${input.name}".
     Опис: ${input.description}.
     
-    СТВОРИ 5 КОНКРЕТНИХ КРОКІВ (Заголовки мають бути короткими і потужними):
-    1. Core Stack: Обери основний стек (Frontend/Backend/DB) з коротким обґрунтуванням. Пропонуй лише сучасні та масштабовані рішення (Next.js, FastAPI, Node.js, Go, PostgreSQL, Redis тощо).
-    2. Infrastructure: Хмара, контейнеризація та CI/CD (Docker, AWS/GCP, GitHub Actions).
-    3. AI Engine: Як саме реалізувати інтелект (OpenAI API, локальні моделі через Ollama, LangChain, векторні бази типу Pinecone).
-    4. Data & Architecture: Опиши архітектурний паттерн (мікросервіси, моноліт, serverless).
-    5. MVP Milestone: Головна технічна ціль першого релізу.
+    СТРУКТУРА ВІДПОВІДІ (5 кроків):
+    1. Core Stack (FE, BE, БД)
+    2. Cloud & Infrastructure (Хостинг, CI/CD, контейнери)
+    3. AI Implementation (Конкретні моделі, бібліотеки, архітектура)
+    4. Scaling & Performance (Кешування, балансування, оптимізація БД)
+    5. Security & Compliance (Автентифікація, захист даних, стандарти)
 
-    СТИЛЬ: Технічний, чіткий, без зайвих слів. Тільки конкретні бібліотеки та інструменти. МОВА: Українська.`;
+    ГЛИБОКІ АРХІТЕКТУРНІ ПРАВИЛА (SMART CTO LOGIC):
+    - 3D ІГРИ: Unreal Engine 5 (C++) або Unity (C#). Локальний ШІ (Behavior Trees).
+    - МУЛЬТИПЛЕЄР: Game servers (Go/C++), WebSockets/UDP, Tick rate.
+    - СТРАТЕГІЇ: Патерн ECS для великої кількості юнітів.
+    - RPG: Складні системи інвентарю, двигуни квестів/діалогів.
+    - B2B SAAS: Multi-tenancy, Row-level security в БД, інтеграція Stripe.
+    - MARKETPLACE: ElasticSearch/Algolia для пошуку, Redis для запасів у реальному часі.
+    - CONTENT/STREAMING: CDN, HLS/DASH, Edge functions для низької затримки.
+    - FINTECH: PostgreSQL (ACID), PCI-DSS, логіка подвійного запису.
+    - AI APPS: Архітектура RAG (Vector DBs), стрімінг відповідей LLM.
+
+    СТИЛЬ: Професійний, технічний, насичений. Тільки конкретні технології. МОВА: Українська.`;
     } else {
-      prompt = `Ты — опытный CTO. Спроектируй технический фундамент и дорожную карту для стартапа: "${input.name}".
+      prompt = `Ты — опытный CTO и системный архитектор. Спроектируй точный технический фундамент для: "${input.name}".
     Описание: ${input.description}.
     
-    СОЗДАЙ 5 КОНКРЕТНЫХ ШАГОВ (Заголовки должны быть короткими и мощными):
-    1. Core Stack: Выбери основной стек (Frontend/Backend/DB) с коротким обоснованием. Предлагай только современные и масштабируемые решения (Next.js, FastAPI, Node.js, Go, PostgreSQL, Redis и т.д.).
-    2. Infrastructure: Облако, контейнеризация и CI/CD (Docker, AWS/GCP, GitHub Actions).
-    3. AI Engine: Как именно реализовать интеллект (OpenAI API, локальные модели через Ollama, LangChain, вектроные базы типа Pinecone).
-    4. Data & Architecture: Опиши архитектурный паттерн (микросервисы, монолит, serverless).
-    5. MVP Milestone: Главная техническая цель первого релиза.
+    СТРУКТУРА ОТВЕТА (5 шагов):
+    1. Core Stack (FE, BE, БД)
+    2. Cloud & Infrastructure (Хостинг, CI/CD, контейнеры)
+    3. AI Implementation (Конкретные модели, библиотеки, архитектура)
+    4. Scaling & Performance (Кеширование, балансировка, оптимизация БД)
+    5. Security & Compliance (Аутентификация, защита данных, стандарты)
 
-    STYLE: Технический, четкий, без лишних слов. Только конкретные библиотеки и инструменты. ЯЗЫК: Русский.`;
+    ГЛУБОКИЕ АРХИТЕКТУРНЫЕ ПРАВИЛА (SMART CTO LOGIC):
+    - 3D ИГРЫ: Unreal Engine 5 (C++) или Unity (C#). Локальный ИИ (Behavior Trees).
+    - МУЛЬТИПЛЕЕР: Game servers (Go/C++), WebSockets/UDP, оптимизация Tick rate.
+    - СТРАТЕГИИ: Паттерн ECS для огромного количества юнитов.
+    - RPG: Сложные системы инвентаря, движки квестов и диалоговых графов.
+    - B2B SAAS: Multi-tenancy, Row-level security в БД, интеграция Stripe.
+    - MARKETPLACE: ElasticSearch/Algolia для поиска, Redis для складских остатков в реальном времени.
+    - CONTENT/STREAMING: CDN (CloudFront), HLS/DASH, Edge functions для минимальной задержки.
+    - FINTECH: PostgreSQL (ACID), PCI-DSS, логика двойной записи.
+    - AI APPS: RAG архитектура (Vector DBs), стриминг ответов LLM.
+
+    STYLE: Профессиональный, технический, насыщенный. Только конкретные технологии. ЯЗЫК: Русский.`;
     }
 
     const result = await ai.generate({
