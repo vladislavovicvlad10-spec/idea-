@@ -8,20 +8,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2, Check } from "lucide-react";
 import Link from "next/link";
+import { useLang } from "@/lib/lang-context";
 
 
 export default function SharedIdeaPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams() as { id: string };
   const [idea, setIdea] = useState<Idea | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFoundState, setNotFoundState] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [lang] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("app_lang") || "en";
-    }
-    return "en";
-  });
+  const { t } = useLang();
 
   useEffect(() => {
     const load = async () => {
@@ -51,10 +47,10 @@ export default function SharedIdeaPage() {
     notFound();
   }
 
-  const backLabel = lang === 'en' ? 'Back' : lang === 'uk' ? 'Назад' : 'Назад';
-  const shareLabel = lang === 'en' ? 'Share' : lang === 'uk' ? 'Поділитися' : 'Поделиться';
-  const copiedLabel = lang === 'en' ? 'Copied!' : lang === 'uk' ? 'Скопійовано!' : 'Скопировано!';
-  const sharedIdeaLabel = lang === 'en' ? 'Shared Idea' : lang === 'uk' ? 'Публічна ідея' : 'Публичная идея';
+  const backLabel = t.backLabel;
+  const shareLabel = t.shareLabel;
+  const copiedLabel = t.copiedLabel;
+  const sharedIdeaLabel = t.sharedIdeaLabel;
 
   return (
     <div className="container mx-auto max-w-3xl py-12 px-4 animate-in fade-in slide-in-from-bottom-4 duration-700">

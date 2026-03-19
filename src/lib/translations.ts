@@ -146,6 +146,10 @@ export const translations = {
     contactUs: "Связаться с нами",
     march2026: "Март 2026",
     marketPerspective: "Рыночная перспектива:",
+    backLabel: "Назад",
+    shareLabel: "Поделиться",
+    copiedLabel: "Скопировано!",
+    sharedIdeaLabel: "Публичная идея",
   },
   en: {
     title: "Unleash your",
@@ -292,6 +296,10 @@ export const translations = {
     contactUs: "Contact us",
     march2026: "March 2026",
     marketPerspective: "Market Perspective:",
+    backLabel: "Back",
+    shareLabel: "Share",
+    copiedLabel: "Copied!",
+    sharedIdeaLabel: "Shared Idea",
   },
   uk: {
     title: "Розкрийте свій",
@@ -438,6 +446,10 @@ export const translations = {
     contactUs: "Зв'язатися з нами",
     march2026: "Березень 2026",
     marketPerspective: "Ринкова перспектива:",
+    backLabel: "Назад",
+    shareLabel: "Поділитися",
+    copiedLabel: "Скопійовано!",
+    sharedIdeaLabel: "Публічна ідея",
   },
 };
 

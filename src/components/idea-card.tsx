@@ -146,7 +146,8 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
       setBusinessDetails(data);
       updateSessionStorage("businessDetails", data);
     } else {
-      toast.error(t.toastError);
+      const errorMsg = (result as { message?: string }).message || result.error || t.toastError;
+      toast.error(errorMsg);
     }
     setIsBusinessLoading(false);
   };
@@ -160,7 +161,8 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
       setTechStack(data);
       updateSessionStorage("techStack", data);
     } else {
-      toast.error(t.toastError);
+      const errorMsg = (result as { message?: string }).message || result.error || t.toastError;
+      toast.error(errorMsg);
     }
     setIsTechLoading(false);
   };

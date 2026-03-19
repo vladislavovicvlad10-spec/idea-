@@ -4,20 +4,13 @@ import Link from "next/link";
 import { useAuth } from "@/firebase/provider";
 import { Button } from "./ui/button";
 import { Flame } from "lucide-react";
-import { getTranslation } from "@/lib/translations";
+import { useLang } from "@/lib/lang-context";
 import { useEffect, useState } from "react";
 
 export function Header() {
   const { user, loading } = useAuth();
-  const [lang, setLang] = useState("en");
+  const { lang, t } = useLang();
   const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    const savedLang = localStorage.getItem("app_lang");
-    if (savedLang) {
-      setTimeout(() => setLang(savedLang), 0);
-    }
-  }, []);
 
   // Fetch admin status server-side — email never exposed in client bundle
   useEffect(() => {
@@ -41,7 +34,6 @@ export function Header() {
     checkAdmin();
   }, [user]);
 
-  const t = getTranslation(lang);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

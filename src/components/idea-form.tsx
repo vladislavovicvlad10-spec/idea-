@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Loader2, Lock } from "lucide-react";
-import { getTranslation } from "@/lib/translations";
+import { useLang } from "@/lib/lang-context";
 import { useAuth } from "@/firebase/provider";
 import { toast } from "sonner";
 
@@ -13,17 +13,8 @@ interface IdeaFormProps {
 
 export function IdeaForm({ onGenerate, isLoading }: IdeaFormProps) {
   const [theme, setTheme] = useState("");
-  const [lang, setLang] = useState("en");
+  const { t } = useLang();
   const { user } = useAuth();
-
-  useEffect(() => {
-    const savedLang = localStorage.getItem("app_lang");
-    if (savedLang) {
-      setTimeout(() => setLang(savedLang), 0);
-    }
-  }, []);
-
-  const t = getTranslation(lang);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

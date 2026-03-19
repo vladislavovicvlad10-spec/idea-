@@ -47,32 +47,38 @@ function isRateLimitError(error: unknown): boolean {
 export async function generateWithRotation<T>(
   generateFn: (ai: Genkit, model: string) => Promise<T>
 ): Promise<T> {
-  
-
-
   const tryGroqModel = async (modelName: string): Promise<T> => {
     let retries = 0;
     while (retries < groqInstances.length) {
       try {
         const ai = groqInstances[currentKeyIndex];
-        console.log(`[Llama-4 Full Mode] Пытаемся вызвать Groq [${modelName}] через ключ #${currentKeyIndex + 1}...`);
+        console.log(`[Llama-4 Full Mode] Key #${currentKeyIndex + 1}/${groqInstances.length} | Model: ${modelName} | Attempt: ${retries + 1}`);
+        
         return await generateFn(ai, `groq/${modelName}`);
       } catch (error) {
-        if (isRateLimitError(error)) {
-          console.warn(`[Llama-4 Full Mode] Ключ #${currentKeyIndex + 1} под лимитом, пробуем следующий...`);
-          currentKeyIndex = (currentKeyIndex + 1) % groqInstances.length;
-          retries++;
+        const errMsg = error instanceof Error ? error.message : String(error);
+        const isRateLimit = isRateLimitError(error);
+        
+        if (isRateLimit) {
+          console.warn(`[Llama-4 Full Mode] Key #${currentKeyIndex + 1} RATE LIMIT. Rotating...`);
         } else {
-          // Выводим реальную причину ошибки для диагностики
-          const errMsg = error instanceof Error ? error.message : String(error);
-          console.error(`[AI ERROR] Groq [${modelName}] сломался: ${errMsg}`);
-          throw error;
+          console.error(`[AI ERROR] Groq [${modelName}] failed on Key #${currentKeyIndex + 1}: ${errMsg}`);
+        }
+
+        // Always rotate and retry on the next key for resilience
+        currentKeyIndex = (currentKeyIndex + 1) % groqInstances.length;
+        retries++;
+
+        if (retries >= groqInstances.length) {
+          console.error(`[CRITICAL] All ${groqInstances.length} keys exhausted or failed for ${modelName}.`);
+          throw new Error(isRateLimit 
+            ? `Все AI-ключи временно ограничены (429). Попробуйте через минуту.`
+            : `Ошибка AI: ${errMsg}. Мы пробовали все доступные ключи.`);
         }
       }
     }
-    throw new Error(`${modelName} недоступна из-за лимитов на всех ключах.`);
+    throw new Error(`${modelName} недоступна.`);
   };
 
   return await tryGroqModel("meta-llama/llama-4-scout-17b-16e-instruct");
 }
-

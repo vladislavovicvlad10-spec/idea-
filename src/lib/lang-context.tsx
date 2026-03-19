@@ -25,8 +25,10 @@ export function LangProvider({ children }: { children: ReactNode }) {
       const storedLang = localStorage.getItem("app_lang");
       if (storedLang) {
         setLangState(storedLang);
+        document.documentElement.lang = storedLang;
       } else {
         localStorage.setItem("app_lang", "en");
+        document.documentElement.lang = "en";
       }
     }, 0);
   }, []);

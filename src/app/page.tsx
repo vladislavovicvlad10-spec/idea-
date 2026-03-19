@@ -7,18 +7,14 @@ import { getIdeasAction } from "./actions";
 import { toast } from "sonner";
 import { Idea } from "@/components/idea-card";
 import { Sparkles } from "lucide-react";
-import { getTranslation } from "@/lib/translations";
+import { useLang } from "@/lib/lang-context";
 
 export default function Home() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [lang, setLang] = useState("en");
+  const { lang, t } = useLang();
 
   useEffect(() => {
-    const savedLang = localStorage.getItem("app_lang");
-    if (savedLang) {
-      setTimeout(() => setLang(savedLang), 0);
-    }
     const savedIdeas = sessionStorage.getItem("lastIdeas");
     if (savedIdeas) {
       try {
@@ -29,8 +25,6 @@ export default function Home() {
       }
     }
   }, []);
-
-  const t = getTranslation(lang);
 
   const handleGenerate = async (theme: string) => {
     setIsLoading(true);

@@ -59,7 +59,8 @@ export const detailAppIdeaFlow = async (input: { name: string; description: stri
       model: model,
       prompt: prompt,
       config: {
-        temperature: 0.7
+        temperature: 0.7,
+        maxOutputTokens: 2048
       },
       output: {
         schema: OutputSchema

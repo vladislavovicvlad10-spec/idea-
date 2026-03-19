@@ -89,7 +89,8 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
       model: model,
       prompt: prompt,
       config: {
-        temperature: 0.6
+        temperature: 0.6,
+        maxOutputTokens: 4096
       },
       output: {
         schema: OutputSchema
