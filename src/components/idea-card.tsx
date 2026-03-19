@@ -121,16 +121,16 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     }
   };
 
-  const updateLocalStorage = (field: keyof Idea, data: unknown) => {
+  const updateSessionStorage = (field: keyof Idea, data: unknown) => {
     try {
-      const stored = localStorage.getItem("lastIdeas");
+      const stored = sessionStorage.getItem("lastIdeas");
       if (stored) {
         const parsed = JSON.parse(stored) as Idea[];
         const newIdeas = parsed.map(i => i.name === idea.name ? { ...i, [field]: data } : i);
-        localStorage.setItem("lastIdeas", JSON.stringify(newIdeas));
+        sessionStorage.setItem("lastIdeas", JSON.stringify(newIdeas));
       }
     } catch {
-      // Игнорируем ошибки localStorage (например, в режиме инкогнито или переполнения)
+      // Игнорируем ошибки sessionStorage
     }
   };
 
@@ -143,7 +143,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     if (result.success && result.data) {
       const data = result.data as { targetAudience: string; monetization: string; uniqueness: string };
       setBusinessDetails(data);
-      updateLocalStorage("businessDetails", data);
+      updateSessionStorage("businessDetails", data);
     } else {
       toast.error(t.toastError);
     }
@@ -157,7 +157,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     if (result.success && result.data) {
       const data = result.data as { steps: { title: string; description: string }[] };
       setTechStack(data);
-      updateLocalStorage("techStack", data);
+      updateSessionStorage("techStack", data);
     } else {
       toast.error(t.toastError);
     }
