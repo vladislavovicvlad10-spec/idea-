@@ -35,7 +35,7 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
     - CONTENT/STREAMING: CDN (CloudFront), HLS/DASH, Edge functions for low latency.
     - FINTECH: PostgreSQL (ACID), PCI-DSS, double-entry bookkeeping logic.
     IMPORTANT: The "description" field MUST be a single STRING. Do NOT use nested objects. Use plain text or markdown within the string.
-    STRICT RULE: All output (titles and descriptions) MUST be in ENGLISH only.
+    STRICT RULE: All output (titles and descriptions) MUST be in ENGLISH and use LATIN characters ONLY. Use of Chinese or other scripts is PROHIBITED.
 
     STYLE: Pro-level, technical, dense. Do not just list tech; write 1-2 sentences of technical justification for each point why this exact stack was chosen. LANGUAGE: English.`;
     } else if (lang === 'uk') {
@@ -59,7 +59,7 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
     - CONTENT/STREAMING: CDN, HLS/DASH, Edge functions для низької затримки.
     - FINTECH: PostgreSQL (ACID), PCI-DSS, логіка подвійного запису.
     ВАЖЛИВО: Поле "description" має бути одним РЯДКОМ (string). НЕ використовуйте вкладені об'єкти.
-    СУВОРА ВИМОГА: Уся вихідна інформація (titles та descriptions) МАЄ БУТИ ВИКЛЮЧНО УКРАЇНСЬКОЮ МОВОЮ.
+    СУВОРА ВИМОГА: Уся вихідна інформація (titles та descriptions) МАЄ БУТИ ВИКЛЮЧНО УКРАЇНСЬКОЮ МОВОЮ (кирилиця/латиниця). Ієрогліфи ЗАБОРОНЕНІ.
 
     СТИЛЬ: Професійний, технічний, насичений. Не просто перелічуй технології; для кожного пункту напиши 1-2 речення з технічним обґрунтуванням — ЧОМУ обрано саме цей стек для даної ідеї. МОВА: Українська.`;
     } else {
@@ -83,7 +83,7 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
     - CONTENT/STREAMING: CDN (CloudFront), HLS/DASH, Edge functions for минимальной задержки.
     - FINTECH: PostgreSQL (ACID), PCI-DSS, логика двойной записи.
     ВАЖНО: Поле "description" должно быть строго одной СТРОКОЙ (string). НЕ используйте вложенные объекты.
-    СТРОГОЕ ПРАВИЛО: Вся выходная информация (названия шагов и их описания) ДОЛЖНА БЫТЬ СТРОГО НА РУССКОМ ЯЗЫКЕ, даже если входные фичи указаны на английском.
+    СТРОГОЕ ПРАВИЛО: Вся выходная информация (названия шагов и их описания) ДОЛЖНА БЫТЬ СТРОГО НА РУССКОМ ЯЗЫКЕ (кириллица/латиница). Использование иероглифов КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО.
 
     STYLE: Профессиональный, технический, насыщенный. Не просто перечисляй технологии; для каждого пункта напиши 1-2 предложения с техническим обоснованием — ПОЧЕМУ выбран именно этот стек для данной идеи. ЯЗЫК: Русский.`;
     }
@@ -93,7 +93,7 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
       prompt: prompt,
       config: {
         temperature: 0.5,
-        topP: 0.95,
+        topP: 0.9,
         maxOutputTokens: 4096
       },
       output: {

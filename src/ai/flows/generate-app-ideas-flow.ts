@@ -19,6 +19,7 @@ export const generateAppIdeasFlow = async (input: { themeOrKeywords: string, lan
       prompt = `Generate 3 truly COOL and large-scale startups on the topic: "${input.themeOrKeywords}".
       
       RULE #1 (LANGUAGE): Write the entire response in English.
+      STRICT RULE: ONLY use Latin characters. Use of Chinese, Japanese or other non-Latin scripts is PROHIBITED.
       IMPORTANT: The project names (name) must ALWAYS be in English.
       
       RULE #2 (STYLE): Write like a passionate Silicon Valley founder. Maximum energy, vivid language, no corporate boredom. Skip phrases like "the project is" or "solves the problem". Dive straight into the action!
@@ -42,6 +43,7 @@ export const generateAppIdeasFlow = async (input: { themeOrKeywords: string, lan
       prompt = `Згенеруй 3 справді КРУТИХ і масштабних стартапи на тему: "${input.themeOrKeywords}".
 
       ПРАВИЛО №1 (МОВА): Пиши весь відповідь Українською мовою.
+      СУВОРА ВИМОГА: Використовувати тільки КИРИЛИЦЮ (українську) та ЛАТИНИЦЮ. Китайські, японські та інші ієрогліфи КАТЕГОРИЧНО ЗАБОРОНЕНІ.
       ВАЖЛИВО: Самі назви проектів (name) мають ЗАВЖДИ бути англійською (English), навіть якщо опис іншою мовою.
 
       ПРАВИЛО №2 (СТИЛЬ): Пиши як азартний засновник із Кремнієвої Долини. Максимум енергії, жива мова, ніякої корпоративної нудьги. Забудь фрази типу "проект являє собою" або "вирішує проблему". Одразу в бій!
@@ -65,6 +67,7 @@ export const generateAppIdeasFlow = async (input: { themeOrKeywords: string, lan
       prompt = `Сгенерируй 3 по-настоящему КРУТЫХ и масштабных стартапа на тему: "${input.themeOrKeywords}".
 
       ПРАВИЛО №1 (ЯЗЫК): Пиши весь ответ на Русском языке.
+      СТРОГОЕ ПРАВИЛО: Используй только КИРИЛЛИЦУ и ЛАТИНИЦУ. Китайские, японские и прочие иероглифы КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНЫ.
       ВАЖНО: Сами названия проектов (name) должны ВСЕГДА быть на английском языке (English), даже если описание на другом языке.
 
       ПРАВИЛО №2 (СТИЛЬ): Пиши как азартный фаундер из Кремниевой Долины. Максимум энергии, живой язык, никакой корпоративной скуки. Забудь фразы типа "проект представляет собой" или "решает проблему". Сразу в бой!
@@ -90,7 +93,8 @@ export const generateAppIdeasFlow = async (input: { themeOrKeywords: string, lan
       model: model,
       prompt: prompt,
       config: {
-        temperature: 0.8, 
+        temperature: 0.65, 
+        topP: 0.9,
         maxOutputTokens: 5000 
       },
       output: {
