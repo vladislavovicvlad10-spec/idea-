@@ -140,7 +140,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
   const fetchBusinessDetails = async () => {
     if (businessDetails) return;
     setIsBusinessLoading(true);
-    const result = await detailIdeaAction(idea, lang);
+    const result = (await detailIdeaAction(idea, lang)) as { success: boolean; data?: { targetAudience: string; monetization: string; uniqueness: string; marketPerspective: string }; error?: string; message?: string };
     if (result.success && result.data) {
       const data = result.data as { targetAudience: string; monetization: string; uniqueness: string; marketPerspective: string };
       setBusinessDetails(data);
@@ -155,7 +155,7 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
   const fetchTechStack = async () => {
     if (techStack) return;
     setIsTechLoading(true);
-    const result = await suggestTechStackAction(idea, lang);
+    const result = (await suggestTechStackAction(idea, lang)) as { success: boolean; data?: { steps: { title: string; description: string }[] }; error?: string; message?: string };
     if (result.success && result.data) {
       const data = result.data as { steps: { title: string; description: string }[] };
       setTechStack(data);

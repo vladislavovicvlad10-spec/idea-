@@ -26,7 +26,9 @@ export const detailAppIdeaFlow = async (input: { name: string; description: stri
     3. Uniqueness (USP): Formulate the killer feature and market advantage. Why will competitors be left behind?
     4. Market Perspective: Briefly describe current market trends, potential competitors, and key risks to consider.
 
-    STYLE: Business, expert, devoid of fluff. Only essence and strategy. LANGUAGE: English.`;
+    STYLE: Business, expert, devoid of fluff. Only essence and strategy. LANGUAGE: English.
+    
+    IMPORTANT: Every field in the response JSON MUST be a STRING. Do NOT use nested objects in the description fields.`;
     } else if (lang === 'uk') {
       prompt = `Ти — елітний бізнес-стратег і CEO. Розроби коротку, але потужну бізнес-модель для проекту: "${input.name}".
     
@@ -39,7 +41,9 @@ export const detailAppIdeaFlow = async (input: { name: string; description: stri
     3. Унікальність (УТП): Сформулюй кілер-фічу та ринкову перевагу. Чому конкуренти залишаться позаду?
     4. Ринкова перспектива: Коротко опишіть поточні ринкові тенденції, потенційних конкурентів та ключові ризики, які слід врахувати.
 
-    СТИЛЬ: Діловий, експертний, без зайвої води. Тільки суть і стратегія. МОВА: Українська.`;
+    СТИЛЬ: Діловий, експертний, без зайвої води. Тільки суть і стратегія. МОВА: Українська.
+    
+    ВАЖЛИВО: Кожне поле у відповіді JSON має бути РЯДКОМ (string). НЕ використовуйте вкладені об'єкти.`;
     } else {
       prompt = `Ты — элитный бизнес-стратег и CEO. Разработай краткую, но мощную бизнес-модель для проекта: "${input.name}".
     
@@ -52,7 +56,9 @@ export const detailAppIdeaFlow = async (input: { name: string; description: stri
     3. Уникальность (УТП): Сформулируй киллер-фичу и рыночное преимущество. Почему конкуренты останутся позади?
     4. Рыночная перспектива: Кратко опишите текущие рыночные тенденции, потенциальных конкурентов и ключевые риски, которые следует учитывать.
 
-    STYLE: Деловой, экспертный, лишенный воды. Только суть и стратегия. ЯЗЫК: Русский.`;
+    STYLE: Деловой, экспертный, лишенный воды. Только суть и стратегия. ЯЗЫК: Русский.
+    
+    ВАЖНО: Каждое поле в ответе JSON должно быть строго СТРОКОЙ (string). НЕ используйте вложенные объекты.`;
     }
 
     const result = await ai.generate({

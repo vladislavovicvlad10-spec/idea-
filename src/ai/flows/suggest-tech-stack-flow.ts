@@ -34,7 +34,9 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
     - MARKETPLACE: ElasticSearch/Algolia for search, Redis for real-time inventory.
     - CONTENT/STREAMING: CDN (CloudFront), HLS/DASH, Edge functions for low latency.
     - FINTECH: PostgreSQL (ACID), PCI-DSS, double-entry bookkeeping logic.
-    - AI APPS: RAG architecture (Vector DBs like Pinecone/Milvus), streaming LLM responses.
+    AI APPS: RAG architecture (Vector DBs like Pinecone/Milvus), streaming LLM responses.
+    
+    IMPORTANT: The "description" field MUST be a single STRING. Do NOT use nested objects. Use plain text or markdown within the string.
 
     STYLE: Pro-level, technical, dense. Only specific tech. LANGUAGE: English.`;
     } else if (lang === 'uk') {
@@ -57,7 +59,9 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
     - MARKETPLACE: ElasticSearch/Algolia для пошуку, Redis для запасів у реальному часі.
     - CONTENT/STREAMING: CDN, HLS/DASH, Edge functions для низької затримки.
     - FINTECH: PostgreSQL (ACID), PCI-DSS, логіка подвійного запису.
-    - AI APPS: Архітектура RAG (Vector DBs), стрімінг відповідей LLM.
+    AI APPS: Архітектура RAG (Vector DBs), стрімінг відповідей LLM.
+    
+    ВАЖЛИВО: Поле "description" має бути одним РЯДКОМ (string). НЕ використовуйте вкладені об'єкти.
 
     СТИЛЬ: Професійний, технічний, насичений. Тільки конкретні технології. МОВА: Українська.`;
     } else {
@@ -80,7 +84,9 @@ export const suggestTechStackFlow = async (input: { name: string; description: s
     - MARKETPLACE: ElasticSearch/Algolia для поиска, Redis для складских остатков в реальном времени.
     - CONTENT/STREAMING: CDN (CloudFront), HLS/DASH, Edge functions для минимальной задержки.
     - FINTECH: PostgreSQL (ACID), PCI-DSS, логика двойной записи.
-    - AI APPS: RAG архитектура (Vector DBs), стриминг ответов LLM.
+    AI APPS: RAG архитектура (Vector DBs), стриминг ответов LLM.
+    
+    ВАЖНО: Поле "description" должно быть строго одной СТРОКОЙ (string). НЕ используйте вложенные объекты.
 
     STYLE: Профессиональный, технический, насыщенный. Только конкретные технологии. ЯЗЫК: Русский.`;
     }
