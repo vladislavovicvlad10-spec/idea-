@@ -53,12 +53,12 @@ export async function generateWithRotation<T>(
       try {
         const ai = groqInstances[currentKeyIndex];
         console.log(`[Llama-4 Full Mode] Key #${currentKeyIndex + 1}/${groqInstances.length} | Model: ${modelName} | Attempt: ${retries + 1}`);
-        
+
         return await generateFn(ai, `groq/${modelName}`);
       } catch (error) {
         const errMsg = error instanceof Error ? error.message : String(error);
         const isRateLimit = isRateLimitError(error);
-        
+
         if (isRateLimit) {
           console.warn(`[Llama-4 Full Mode] Key #${currentKeyIndex + 1} RATE LIMIT. Rotating...`);
         } else {
@@ -71,7 +71,7 @@ export async function generateWithRotation<T>(
 
         if (retries >= groqInstances.length) {
           console.error(`[CRITICAL] All ${groqInstances.length} keys exhausted or failed for ${modelName}.`);
-          throw new Error(isRateLimit 
+          throw new Error(isRateLimit
             ? `Все AI-ключи временно ограничены (429). Попробуйте через минуту.`
             : `Ошибка AI: ${errMsg}. Мы пробовали все доступные ключи.`);
         }
