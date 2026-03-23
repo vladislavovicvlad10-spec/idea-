@@ -6,7 +6,7 @@ import { IdeaList } from "@/components/idea-list";
 import { getIdeasAction } from "./actions";
 import { toast } from "sonner";
 import { Idea } from "@/components/idea-card";
-import { Sparkles } from "lucide-react";
+import { Sparkles, HeartHandshake, ArrowRight } from "lucide-react";
 import { useLang } from "@/lib/lang-context";
 
 export default function Home() {
@@ -69,8 +69,34 @@ export default function Home() {
           {t.description}
         </p>
 
-        <div className="pt-8 w-full max-w-3xl mx-auto pb-8">
+        <div className="pt-8 w-full max-w-3xl mx-auto pb-4">
           <IdeaForm onGenerate={handleGenerate} isLoading={isLoading} />
+        </div>
+
+        {/* Monobank Donation Banner */}
+        <div className="w-full max-w-md mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
+          <a
+            href="https://send.monobank.ua/jar/2z2qtVvT1H"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex items-center justify-between p-4 rounded-2xl border border-primary/20 bg-background/50 backdrop-blur-sm text-foreground shadow-sm hover:border-primary/50 hover:shadow-[0_0_25px_rgba(200,80,250,0.15)] hover:-translate-y-1 transition-all duration-300 overflow-hidden outline-none ring-2 ring-transparent focus-visible:ring-primary"
+          >
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            <div className="absolute -right-6 -top-6 w-24 h-24 bg-primary/10 blur-2xl rounded-full group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
+            
+            <div className="flex items-center gap-3 z-10">
+              <div className="p-2 bg-primary/10 rounded-xl">
+                <HeartHandshake className="w-5 h-5 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-sm leading-tight text-foreground">{t.supportProject}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{t.supportDesc}</p>
+              </div>
+            </div>
+            <div className="p-1.5 bg-primary/10 rounded-full text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors z-10">
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </a>
         </div>
       </div>
 

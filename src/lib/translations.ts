@@ -150,6 +150,8 @@ export const translations = {
     shareLabel: "Поделиться",
     copiedLabel: "Скопировано!",
     sharedIdeaLabel: "Публичная идея",
+    supportProject: "Поддержать проект",
+    supportDesc: "Подарить автору банку на API 🐾",
   },
   en: {
     title: "Unleash your",
@@ -300,6 +302,8 @@ export const translations = {
     shareLabel: "Share",
     copiedLabel: "Copied!",
     sharedIdeaLabel: "Shared Idea",
+    supportProject: "Support Project",
+    supportDesc: "Buy the author an API coffee 🐾",
   },
   uk: {
     title: "Розкрийте свій",
@@ -450,6 +454,8 @@ export const translations = {
     shareLabel: "Поділитися",
     copiedLabel: "Скопійовано!",
     sharedIdeaLabel: "Публічна ідея",
+    supportProject: "Підтримати проект",
+    supportDesc: "Подарувати автору банку на API 🐾",
   },
 };
 
