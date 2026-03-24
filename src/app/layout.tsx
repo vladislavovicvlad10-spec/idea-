@@ -7,6 +7,7 @@ import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import { Footer } from "@/components/footer";
 import { CookieBanner } from "@/components/cookie-banner";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -61,6 +62,7 @@ export default function RootLayout({
             <Footer />
             <CookieBanner />
             <Toaster position="bottom-right" />
+            <Analytics />
           </LangProvider>
         </AuthProvider>
       </body>

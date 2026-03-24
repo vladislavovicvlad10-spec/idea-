@@ -89,7 +89,13 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
 
   const handleCopy = async () => {
     const full = getFullIdea();
-    let content = `${full.name}\n${full.description}\n\n${full.features.map(f => `- ${f}`).join('\n')}`;
+    const promoText = lang === 'en' 
+        ? `Look what AI Architect generated for me on IdeaSpark! 🚀\n\n`
+        : lang === 'uk'
+        ? `Подивіться, яку архітектуру мені зібрав ШІ на IdeaSpark! 🚀\n\n`
+        : `Смотрите, какую архитектуру мне собрал ИИ на IdeaSpark! 🚀\n\n`;
+
+    let content = `${promoText}${full.name}\n${full.description}\n\n${full.features.map(f => `- ${f}`).join('\n')}`;
     
     if (full.businessDetails) {
       content += `\n\n${t.businessDetails}:\n- ${t.targetAudience}: ${full.businessDetails.targetAudience}\n- ${t.monetization}: ${full.businessDetails.monetization}\n- ${t.uniqueness}: ${full.businessDetails.uniqueness}`;
