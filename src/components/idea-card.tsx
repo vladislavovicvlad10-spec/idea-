@@ -120,7 +120,13 @@ export function IdeaCard({ idea, saved = false }: { idea: Idea, saved?: boolean 
     try {
       const id = await saveIdeaForSharing(getFullIdea());
       const url = `${window.location.origin}/idea/${id}`;
-      await navigator.clipboard.writeText(url);
+      const promoText = lang === 'en' 
+        ? `Look what AI Architect generated for me on IdeaSpark! 🚀\n\n`
+        : lang === 'uk'
+        ? `Подивіться, яку архітектуру мені зібрав ШІ на IdeaSpark! 🚀\n\n`
+        : `Смотрите, какую архитектуру мне собрал ИИ на IdeaSpark! 🚀\n\n`;
+      
+      await navigator.clipboard.writeText(`${promoText}${url}`);
       const shareMsg = lang === 'en' ? 'Link copied!' : lang === 'uk' ? 'Посилання скопійовано!' : 'Ссылка скопирована!';
       toast.success(shareMsg);
     } catch {
