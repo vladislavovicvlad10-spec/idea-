@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/firebase/provider";
 import { db } from "@/firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { Idea, IdeaCard } from "@/components/idea-card";
+import { IdeaCard } from "@/components/idea-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { getTranslation } from "@/lib/translations";
 import { Bookmark, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Idea } from "@/lib/types/idea";
 
 export default function BookmarksPage() {
   const { user, loading } = useAuth();

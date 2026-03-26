@@ -109,7 +109,7 @@ export function AuthForm({ type }: { type: "login" | "signup" }) {
       console.error(error);
       const errorCode = (error as { code?: string }).code;
       if (errorCode === 'auth/account-exists-with-different-credential') {
-        toast.error(t.errAccountExists || "Этот Email уже привязан к другому способу входа.");
+        toast.error(t.errAccountExists);
       } else if (errorCode !== 'auth/popup-closed-by-user') {
         toast.error(t.errUnknown);
       }
@@ -143,7 +143,7 @@ export function AuthForm({ type }: { type: "login" | "signup" }) {
       console.error(error);
       const errorCode = (error as { code?: string }).code;
       if (errorCode === 'auth/account-exists-with-different-credential') {
-        toast.error(t.errAccountExists || "Этот Email уже привязан к другому способу входа.");
+        toast.error(t.errAccountExists);
       } else if (errorCode !== 'auth/popup-closed-by-user') {
         toast.error(t.errUnknown);
       }
@@ -291,7 +291,7 @@ export function AuthForm({ type }: { type: "login" | "signup" }) {
                 ) : (
                   <Github className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
                 )}
-                {t.continueGithub || "Продолжить с GitHub"}
+                {t.continueGithub}
               </Button>
 
               <div className="relative">
@@ -342,7 +342,7 @@ export function AuthForm({ type }: { type: "login" | "signup" }) {
           {/* Password Field (Hidden in Reset Mode) */}
           {isResetMode && (
             <div className="bg-amber-500/10 border border-amber-500/30 text-amber-500/90 text-xs px-3 py-2.5 rounded-xl font-medium flex items-start gap-2">
-              <span className="shrink-0 text-amber-500 mt-0.5">⚠️</span>
+              <span className="shrink-0 text-amber-500 mt-0.5">!</span>
               {t.checkSpamWarning}
             </div>
           )}
@@ -444,7 +444,7 @@ export function AuthForm({ type }: { type: "login" | "signup" }) {
                 onClick={() => setIsResetMode(false)}
                 className="text-sm text-muted-foreground hover:underline font-semibold"
               >
-                {lang === 'en' ? 'Back to login' : lang === 'uk' ? 'Повернутися до входу' : 'Вернуться ко входу'}
+                {t.backToLogin}
               </button>
             </div>
           )}
@@ -470,3 +470,4 @@ export function AuthForm({ type }: { type: "login" | "signup" }) {
     </div>
   );
 }
+

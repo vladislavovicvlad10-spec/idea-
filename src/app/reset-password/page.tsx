@@ -14,7 +14,7 @@ import Link from "next/link";
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const [lang, setLang] = useState("en");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +35,7 @@ function ResetPasswordForm() {
       <div className="text-center space-y-4">
         <p className="text-red-500 font-medium">{t.resetError}</p>
         <Link href="/login">
-          <Button variant="outline">Вернуться ко входу</Button>
+          <Button variant="outline">{t.backToLogin}</Button>
         </Link>
       </div>
     );
@@ -72,7 +72,7 @@ function ResetPasswordForm() {
           <div className="text-center space-y-4">
             <p className="text-red-500 font-medium text-sm">{t.resetError}</p>
             <Link href="/login" className="block">
-              <Button type="button" variant="outline" className="w-full">Вернуться ко входу</Button>
+              <Button type="button" variant="outline" className="w-full">{t.backToLogin}</Button>
             </Link>
           </div>
         ) : (
@@ -80,10 +80,10 @@ function ResetPasswordForm() {
             <div className="space-y-2">
               <label className="text-sm text-secondary-foreground font-bold">{t.newPasswordLabel}</label>
               <div className="relative">
-                <Input 
-                  className="h-12 rounded-xl bg-background focus:ring-primary/50 pr-12" 
-                  type={showPassword ? "text" : "password"} 
-                  placeholder={t.passwordPlaceholder} 
+                <Input
+                  className="h-12 rounded-xl bg-background focus:ring-primary/50 pr-12"
+                  type={showPassword ? "text" : "password"}
+                  placeholder={t.passwordPlaceholder}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required

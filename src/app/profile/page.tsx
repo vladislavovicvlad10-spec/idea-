@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/firebase/provider";
 import { db, auth } from "@/firebase";
-import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { signOut, updateProfile, deleteUser, sendPasswordResetEmail } from "firebase/auth";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,10 @@ import { getTranslation } from "@/lib/translations";
 import { toast } from "sonner";
 
 const LANGUAGES = [
-  { code: "ru", label: "Русский", flag: "🇷🇺" },
-  { code: "en", label: "English", flag: "🇺🇸" },
-  { code: "uk", label: "Українська", flag: "🇺🇦" },
-];
+  { code: "ru", short: "RU" },
+  { code: "en", short: "EN" },
+  { code: "uk", short: "UK" },
+] as const;
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -74,7 +74,7 @@ export default function ProfilePage() {
 
   const handleLangChange = (newLang: string) => {
     localStorage.setItem("app_lang", newLang);
-    toast.success(t.changeLanguage + "...");
+    toast.success(`${t.changeLanguage}...`);
     setTimeout(() => window.location.reload(), 500);
   };
 
@@ -83,9 +83,11 @@ export default function ProfilePage() {
       setIsEditingName(false);
       return;
     }
+
     try {
-      await updateProfile(user, { displayName: newName.trim() });
-      await updateDoc(doc(db, "users", user.uid), { name: newName.trim() });
+      const trimmedName = newName.trim();
+      await updateProfile(user, { displayName: trimmedName });
+      await updateDoc(doc(db, "users", user.uid), { name: trimmedName });
       setIsEditingName(false);
       toast.success(t.nameUpdated || "Name updated!");
     } catch (error) {
@@ -97,16 +99,25 @@ export default function ProfilePage() {
   const confirmDeleteAccount = async () => {
     if (!user) return;
     setIsDeleting(true);
+
     try {
-      await deleteDoc(doc(db, "users", user.uid));
+      const idToken = await user.getIdToken();
       await deleteUser(user);
-      document.cookie = "isAuth=; path=/; max-age=0";
+
+      await fetch("/api/account/cleanup", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      }).catch(() => null);
+
+      document.cookie = "isAuth=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       toast.success(t.accountDeleted || "Account deleted.");
       router.push("/login");
     } catch (error: unknown) {
       console.error(error);
       if ((error as { code?: string })?.code === "auth/requires-recent-login") {
-        toast.error("В целях безопасности необходимо перевойти в аккаунт перед удалением.");
+        toast.error(t.requiresRecentLogin);
       } else {
         toast.error(t.errUnknown);
       }
@@ -120,18 +131,15 @@ export default function ProfilePage() {
 
   const registrationDate = user?.metadata?.creationTime
     ? new Date(user.metadata.creationTime).toLocaleDateString(
-        lang === 'en' ? 'en-US' : lang === 'uk' ? 'uk-UA' : 'ru-RU',
-        { month: 'long', day: 'numeric', year: 'numeric' }
+        lang === "en" ? "en-US" : lang === "uk" ? "uk-UA" : "ru-RU",
+        { month: "long", day: "numeric", year: "numeric" }
       )
-    : "—";
+    : "-";
 
   return (
     <div className="container mx-auto max-w-4xl py-12 px-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
-      {/* Header Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10">
         <div className="flex items-center gap-4">
-          {/* Avatar */}
           <div className="relative">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
               <span className="text-2xl font-black font-space-grotesk text-white">
@@ -148,7 +156,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Logout Button */}
         <Button
           variant="outline"
           className="flex items-center gap-2 border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/60 hover:text-red-300 transition-all"
@@ -160,7 +167,6 @@ export default function ProfilePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Personal Data */}
         <Card className="md:col-span-2 bg-card/50 backdrop-blur border-border/50">
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
@@ -178,6 +184,7 @@ export default function ProfilePage() {
                 <p className="font-medium text-sm">{user?.email}</p>
               </div>
             </div>
+
             <div className="flex items-center gap-3 p-4 bg-secondary/30 rounded-xl border border-border/30">
               <div className="p-2 bg-primary/10 rounded-lg">
                 <Calendar className="w-4 h-4 text-primary" />
@@ -196,7 +203,7 @@ export default function ProfilePage() {
                 <div>
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-0.5">{t.editName?.split(" ")[1] || "Name"}</p>
                   {isEditingName ? (
-                    <input 
+                    <input
                       type="text"
                       className="bg-background border rounded px-2 py-1 text-sm outline-none focus:border-primary font-medium"
                       value={newName}
@@ -204,7 +211,7 @@ export default function ProfilePage() {
                       autoFocus
                     />
                   ) : (
-                    <p className="font-medium text-sm">{user?.displayName || "—"}</p>
+                    <p className="font-medium text-sm">{user?.displayName || "-"}</p>
                   )}
                 </div>
                 {isEditingName ? (
@@ -216,15 +223,11 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex flex-col gap-2 pt-2">
-              <Button 
-                variant="outline" 
-                className="w-full font-medium"
-                onClick={handleChangePassword}
-              >
+              <Button variant="outline" className="w-full font-medium" onClick={handleChangePassword}>
                 {t.changePassword}
               </Button>
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 className="w-full font-medium bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors"
                 onClick={() => setShowDeleteModal(true)}
               >
@@ -234,7 +237,6 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Stats */}
         <Card className="bg-primary/5 border-primary/20 shadow-inner">
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
@@ -250,7 +252,6 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Language Switcher */}
         <Card className="md:col-span-3 bg-card/50 backdrop-blur border-border/50">
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
@@ -260,12 +261,14 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-3">
-              {LANGUAGES.map((l) => {
-                const isActive = lang === l.code;
+              {LANGUAGES.map((item) => {
+                const isActive = lang === item.code;
+                const label = item.code === "ru" ? t.langRu : item.code === "uk" ? t.langUk : t.langEn;
+
                 return (
                   <button
-                    key={l.code}
-                    onClick={() => !isActive && handleLangChange(l.code)}
+                    key={item.code}
+                    onClick={() => !isActive && handleLangChange(item.code)}
                     className={`
                       relative flex items-center gap-3 p-4 rounded-xl border transition-all duration-300 text-left group
                       ${isActive
@@ -274,11 +277,9 @@ export default function ProfilePage() {
                       }
                     `}
                   >
-                    <span className={`text-3xl transition-all duration-300 ${isActive ? '' : 'filter grayscale group-hover:grayscale-0'}`}>
-                      {l.flag}
-                    </span>
-                    <span className={`font-medium text-sm font-space-grotesk ${isActive ? 'text-primary' : 'text-foreground/70'}`}>
-                      {l.label}
+                    <span className="text-2xl font-bold tracking-wide text-primary/90">{item.short}</span>
+                    <span className={`font-medium text-sm ${isActive ? "text-primary" : "text-foreground/70"}`}>
+                      {label}
                     </span>
                     {isActive && (
                       <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
@@ -305,24 +306,19 @@ export default function ProfilePage() {
                 {t.confirmDelete || "Are you sure? This action is irreversible."}
               </p>
             </div>
-            
+
             <div className="flex gap-3 justify-center w-full mt-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowDeleteModal(false)}
-                disabled={isDeleting}
-                className="flex-1 font-medium"
-              >
-                {lang === 'ru' ? 'Отмена' : lang === 'uk' ? 'Скасувати' : 'Cancel'}
+              <Button variant="outline" onClick={() => setShowDeleteModal(false)} disabled={isDeleting} className="flex-1 font-medium">
+                {t.cancel}
               </Button>
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 className="bg-red-500 hover:bg-red-600 text-white flex-1 font-medium shadow-lg shadow-red-500/20"
                 onClick={confirmDeleteAccount}
                 disabled={isDeleting}
               >
                 {isDeleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                {lang === 'ru' ? 'Да, удалить' : lang === 'uk' ? 'Так, видалити' : 'Yes, delete'}
+                {t.deleteConfirmAction}
               </Button>
             </div>
           </div>

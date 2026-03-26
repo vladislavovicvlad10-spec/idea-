@@ -13,7 +13,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-zinc-500 text-sm">
-            <span>© {new Date().getFullYear()} IdeaSpark. {t.allRightsReserved}</span>
+            <span>&copy; {new Date().getFullYear()} IdeaSpark. {t.allRightsReserved}</span>
           </div>
           
           <div className="flex gap-8 text-sm font-medium">
@@ -33,3 +33,4 @@ export function Footer() {
     </footer>
   );
 }
+

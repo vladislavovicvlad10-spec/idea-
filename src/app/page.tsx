@@ -5,9 +5,10 @@ import { IdeaForm } from "@/components/idea-form";
 import { IdeaList } from "@/components/idea-list";
 import { getIdeasAction } from "./actions";
 import { toast } from "sonner";
-import { Idea } from "@/components/idea-card";
 import { Sparkles, HeartHandshake, ArrowRight } from "lucide-react";
 import { useLang } from "@/lib/lang-context";
+import { Button } from "@/components/ui/button";
+import { Idea } from "@/lib/types/idea";
 
 export default function Home() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
@@ -39,15 +40,24 @@ export default function Home() {
        toast.success(t.toastSuccess);
     } else if (result.error === "RATE_LIMIT") {
        const msg = t.rateLimitError.replace("{time}", String(result.remainingMins));
-       toast.error(msg, { icon: "⏳" });
+       toast.error(msg);
     } else if (result.error === "RATE_LIMIT_AI_GLOBAL") {
-       toast.error(t.rateLimitAll, { icon: "🚀" });
+       toast.error(t.rateLimitAll);
+    } else if (result.error === "AI_TEMPORARY_FAILURE") {
+       toast.error(t.toastError);
     } else {
        toast.error(result.error || t.toastError);
     }
     
     setIsLoading(false);
   };
+
+  const trendingTags = [
+    { id: 'ai', label: t.trendingAI, query: "AI Agents Platform" },
+    { id: 'saas', label: t.trendingSaaS, query: "Multi-tenant B2B SaaS Dashboard" },
+    { id: 'game', label: t.trendingGame, query: "3D Action RPG Mobile Game" },
+    { id: 'crypto', label: t.trendingCrypto, query: "Web3 Decentralized Application" },
+  ];
 
   return (
     <div className="flex flex-col items-center justify-start py-12 md:py-24 px-4 relative overflow-hidden flex-1">
@@ -69,8 +79,26 @@ export default function Home() {
           {t.description}
         </p>
 
-        <div className="pt-8 w-full max-w-3xl mx-auto pb-4">
+        <div className="pt-8 w-full max-w-3xl mx-auto space-y-4">
           <IdeaForm onGenerate={handleGenerate} isLoading={isLoading} />
+          
+          <div className="flex flex-wrap items-center justify-center gap-2 px-2 animate-in fade-in slide-in-from-bottom-2 duration-1000 delay-300">
+            <span className="text-xs font-bold text-muted-foreground mr-1 uppercase tracking-wider">{t.trendingLabel}</span>
+            {trendingTags.map((tag) => (
+              <Button
+                key={tag.id}
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  handleGenerate(tag.query);
+                }}
+                disabled={isLoading}
+                className="rounded-full h-8 px-4 text-xs bg-secondary/40 border-border/30 hover:bg-primary/20 hover:border-primary/50 transition-all duration-300 backdrop-blur-sm disabled:pointer-events-none disabled:opacity-20"
+              >
+                {tag.label}
+              </Button>
+            ))}
+          </div>
         </div>
 
         {/* Monobank Donation Banner */}
@@ -100,9 +128,11 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="z-10 w-full mt-4 flex-1">
+      <div id="idea-list" className="z-10 w-full mt-4 flex-1">
         <IdeaList ideas={ideas} />
       </div>
     </div>
   );
 }
+
+

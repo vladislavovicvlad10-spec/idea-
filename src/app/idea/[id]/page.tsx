@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import { getSharedIdea } from "../actions";
-import { IdeaCard, Idea } from "@/components/idea-card";
+import { IdeaCard } from "@/components/idea-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2, Check } from "lucide-react";
 import Link from "next/link";
 import { useLang } from "@/lib/lang-context";
+import { Idea } from "@/lib/types/idea";
 
 
 export default function SharedIdeaPage() {

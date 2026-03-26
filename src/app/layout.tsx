@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/firebase/provider";
 import { LangProvider } from "@/lib/lang-context";
@@ -8,16 +7,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { Footer } from "@/components/footer";
 import { CookieBanner } from "@/components/cookie-banner";
 import { Analytics } from "@vercel/analytics/react";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin", "cyrillic"],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "IdeaSpark | AI Startup & App Generator",
@@ -28,12 +17,23 @@ export const metadata: Metadata = {
     title: "IdeaSpark | AI Startup Generator",
     description: "The most powerful AI tool to generate and detail your next big app idea.",
     type: "website",
+    url: "https://iskraidey.com",
+    siteName: "IdeaSpark",
     locale: "en_US",
+    images: [
+      {
+        url: "https://iskraidey.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "IdeaSpark - AI Startup Idea Generator",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "IdeaSpark | AI Startup Generator",
     description: "Turn your ideas into detailed startup roadmaps with one click.",
+    images: ["https://iskraidey.com/og-image.png"],
   },
   robots: "index, follow",
 };
@@ -51,7 +51,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased min-h-screen flex flex-col bg-background text-foreground`}
+        style={
+          {
+            "--font-inter": 'system-ui, -apple-system, "Segoe UI", sans-serif',
+            "--font-space-grotesk": '"Trebuchet MS", "Segoe UI", sans-serif',
+          } as React.CSSProperties
+        }
+        className="font-sans antialiased min-h-screen flex flex-col bg-background text-foreground"
       >
         <AuthProvider>
           <LangProvider>

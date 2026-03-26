@@ -9,24 +9,45 @@ import { useEffect, useState } from "react";
 
 export function Header() {
   const { user, loading } = useAuth();
-  const { lang, t } = useLang();
+  const { t } = useLang();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Fetch admin status server-side — email never exposed in client bundle
+  // Cache admin status in sessionStorage to avoid API call on every navigation
   useEffect(() => {
     const checkAdmin = async () => {
       if (!user) {
         setIsAdmin(false);
+        sessionStorage.removeItem('_adminCache');
         return;
       }
+
+      // Check cache (valid for 5 minutes)
       try {
+        const cached = sessionStorage.getItem('_adminCache');
+        if (cached) {
+          const { value, expiresAt } = JSON.parse(cached);
+          if (Date.now() < expiresAt) {
+            setIsAdmin(value);
+            return;
+          }
+        }
+      } catch { /* ignore parse errors */ }
+
+      try {
+        const idToken = await user.getIdToken();
         const r = await fetch("/api/is-admin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: user.email }),
+          body: JSON.stringify({ idToken }),
         });
         const data = await r.json();
-        setIsAdmin(data.isAdmin ?? false);
+        const isAdminValue = data.isAdmin ?? false;
+        setIsAdmin(isAdminValue);
+        // Cache for 5 minutes
+        sessionStorage.setItem('_adminCache', JSON.stringify({
+          value: isAdminValue,
+          expiresAt: Date.now() + 5 * 60 * 1000,
+        }));
       } catch {
         setIsAdmin(false);
       }
@@ -40,9 +61,7 @@ export function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center px-4 md:px-8 mx-auto justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <Flame className="h-6 w-6 text-primary" />
-          <span className="font-bold font-space-grotesk text-xl text-primary">
-            {lang === 'en' ? 'IdeaSpark' : lang === 'uk' ? 'ІскраІдей' : 'ИскраИдей'}
-          </span>
+          <span className="font-bold font-space-grotesk text-xl text-primary">IdeaSpark</span>
         </Link>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
@@ -51,11 +70,11 @@ export function Header() {
                 {user ? (
                   <>
                     <Link href="/bookmarks">
-                      <Button variant="ghost" size="sm" className="hidden sm:inline-flex">{t.bookmarks}</Button>
+                      <Button variant="ghost" size="sm" className="inline-flex px-2 md:px-3">{t.bookmarks}</Button>
                     </Link>
                     {isAdmin && (
                       <Link href="/dashboard">
-                        <Button variant="ghost" size="sm" className="hidden sm:inline-flex">{t.dashboard}</Button>
+                        <Button variant="ghost" size="sm" className="inline-flex px-2 md:px-3 text-xs md:text-sm">{t.dashboard}</Button>
                       </Link>
                     )}
                     <Link href="/profile">
@@ -80,3 +99,5 @@ export function Header() {
     </header>
   );
 }
+
+
