@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { AI_CONFIG_MISSING, RATE_LIMIT_ALL_ENGINES } from "@/ai/genkit";
+import type { IdeaDomain } from "@/ai/domain";
 import { classifyDomainFlow } from "@/ai/classify-domain-flow";
 import { generateAppIdeasFlow } from "@/ai/flows/generate-app-ideas-flow";
 import { detailAppIdeaFlow } from "@/ai/flows/detail-app-idea-flow";
@@ -30,7 +31,7 @@ function getLocalizedRateLimitMessage(lang?: string, mins?: number) {
 }
 
 export async function getIdeasAction(theme: string, lang?: string) {
-  let domain = "general";
+  let domain: IdeaDomain = "general";
 
   try {
     const ip = await getRequestIp();
@@ -201,9 +202,9 @@ export async function analyzeArchitectureAction(
     const result = await analyzeArchitectureFlow({ ...idea, lang });
 
     const analysisHeaders = {
-      ru: { e: "Р‘РёС‚РІР° Р±Р°Р· РґР°РЅРЅС‹С…", s: "Р‘СЌРєРµРЅРґ Рё СЏР·С‹РєРё", t: "Р”РІРёР¶РѕРє Рё С„СЂРѕРЅС‚РµРЅРґ", f: "РљРѕРјРїСЂРѕРјРёСЃСЃС‹" },
+      ru: { e: "Database Battle", s: "Backend & Languages", t: "Engine & Frontend", f: "Architectural Trade-offs" },
       en: { e: "Database Battle", s: "Backend & Languages", t: "Engine & Frontend", f: "Architectural Trade-offs" },
-      uk: { e: "Р‘РёС‚РІР° Р±Р°Р· РґР°РЅРёС…", s: "Р‘РµРєРµРЅРґ С‚Р° РјРѕРІРё", t: "Р СѓС€С–Р№ С‚Р° С„СЂРѕРЅС‚РµРЅРґ", f: "РўРµС…РЅС–С‡РЅС– РєРѕРјРїСЂРѕРјС–СЃРё" },
+      uk: { e: "Database Battle", s: "Backend & Languages", t: "Engine & Frontend", f: "Architectural Trade-offs" },
     };
     const currentLang = getCurrentLang(lang);
     const h = analysisHeaders[currentLang];
@@ -220,7 +221,7 @@ export async function analyzeArchitectureAction(
       { title: currentLang === "en" ? "Failure Handling" : currentLang === "uk" ? "Обробка збоїв" : "Обработка сбоев", content: result.failure_handling },
     ];
 
-    const combinedReasoning = archSections.map((s) => `### ${s.title}\n${s.content}`).join("\n\n---\n\n");
+    const combinedReasoning = archSections.map((section) => `### ${section.title}\n${section.content}`).join("\n\n---\n\n");
 
     return {
       success: true,
